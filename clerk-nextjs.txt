@@ -1,0 +1,90 @@
+npm create next-app@latest
+
+npm install @clerk/nextjs
+
+middleware.ts
+import { clerkMiddleware } from '@clerk/nextjs/server'
+
+export default clerkMiddleware()
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+}
+
+layout.tsx
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
+import Header from "./components/Header";
+<ClerkProvider>
+    <html lang="en">
+        <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >   <Header />
+                {children}
+        </body>
+    </html>
+</ClerkProvider>
+
+Header.tsx
+"use client";
+
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import Link from "next/link";
+
+export default function Header() {
+  const { isSignedIn } = useUser();
+
+  return (
+    <header className="flex justify-between items-center p-4 shadow-md bg-white">
+      <h1 className="text-xl font-bold">
+        <Link href="/">MyApp</Link>
+      </h1>
+      <nav>
+        {isSignedIn ? (
+          <div className="flex items-center gap-4">
+            <UserButton showName />
+          </div>
+        ) : (
+          <div className="flex gap-4">
+            <SignInButton mode="modal">
+              <button className="text-black rounded font-bold cursor-pointer">Sign In</button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="text-black rounded font-bold cursor-pointer">Sign Up</button>
+            </SignUpButton>
+          </div>
+        )}
+      </nav>
+    </header>
+  );
+}
+
+page.tsx
+"use client";
+
+import { useUser } from "@clerk/nextjs";
+
+export default function HomePage() {
+  const { user, isSignedIn } = useUser();
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      {isSignedIn ? (
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Welcome, {user?.firstName || user?.username}!</h1>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-bold">Welcome to MyApp</h1>
+        </div>
+      )}
+    </div>
+  );
+}
+
