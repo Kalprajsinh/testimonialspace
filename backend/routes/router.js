@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { User, Organization } = require("../database/database");
+const { Organizationdata, userdatatext, userdatavideo } = require("../zod/zod");
 
 router.get("/", (req, res) => {
     res.send("API is working");
@@ -8,7 +9,12 @@ router.get("/", (req, res) => {
 router.post("/api/organization", async (req, res) => {
     try {
         const { name, logo, title, message } = req.body;
-        console.log(req.body);
+
+        const data = Organizationdata.safeParse(req.body);
+        if (!data.success) {
+            return res.status(400).send(data.error.issues);
+        }
+
         const orga = new Organization({ name, logo, title, message });
         await orga.save();
         res.send("Organization created");
@@ -30,7 +36,17 @@ router.get("/api/organization", async (req, res) => {
 router.post("/api/addtextuser", async (req, res) => {
     try {
       const { name, email, photo, text, star, organizationName, favorite } = req.body;
-  
+
+      const data = userdatatext.safeParse(req.body);
+      if (!data.success) {
+          return res.status(400).send(data.error.issues);
+       }
+
+       const orga = await Organization.findOne({ organizationName });
+       if (!orga) {
+            return res.status(400).send("Organization not found");
+        }
+
       const newUser = new User({
         name,
         email,
@@ -40,7 +56,7 @@ router.post("/api/addtextuser", async (req, res) => {
         organizationName,
         favorite
       });
-  
+
       await newUser.save();
       res.status(201).json(newUser); 
     } catch (err) {
@@ -51,7 +67,17 @@ router.post("/api/addtextuser", async (req, res) => {
   router.post("/api/addvideouser", async (req, res) => {
     try {
       const { name, email, photo, video, star, organizationName, favorite } = req.body;
-  
+
+      const data = userdatavideo.safeParse(req.body);
+      if (!data.success) {
+          return res.status(400).send(data.error.issues);
+       }
+
+       const orga = await Organization.findOne({ organizationName });
+       if (!orga) {
+          return res.status(400).send("Organization not found");
+       }
+       
       const newUser = new User({
         name,
         email,
