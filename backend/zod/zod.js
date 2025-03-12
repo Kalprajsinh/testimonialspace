@@ -1,6 +1,7 @@
 const z = require("zod");
 
 const Organizationdata = z.object({
+    admin:z.string(),
     name:z.string(),
     logo:z.string(),
     title:z.string(),
@@ -8,6 +9,7 @@ const Organizationdata = z.object({
 });
 
 const userdatatext = z.object({
+    admin:z.string(),
     name:z.string(),
     email:z.string().email(),
     photo:z.string(),
@@ -18,6 +20,7 @@ const userdatatext = z.object({
 })
 
 const userdatavideo = z.object({
+    admin:z.string(),
     name:z.string(),
     email:z.string().email(),
     photo:z.string(),

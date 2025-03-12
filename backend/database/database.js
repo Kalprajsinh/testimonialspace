@@ -6,6 +6,7 @@ mongoose.connect(process.env.mongodb_URL, {useNewUrlParser: true, useUnifiedTopo
     .catch((err) => {console.log("Error: ", err);});
 
 const organizationSchema = new mongoose.Schema({
+    admin: { type: String, required: true },
     name: { type: String, required: true },
     logo: { type: String },  
     title: { type: String },
@@ -17,6 +18,7 @@ const organizationSchema = new mongoose.Schema({
 const Organization = mongoose.model("Organization", organizationSchema);
 
 const userSchema = new mongoose.Schema({
+    admin: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
     photo: { type: String },
