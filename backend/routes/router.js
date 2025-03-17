@@ -31,7 +31,7 @@ router.post("/api/organization", async (req, res) => {
 
 router.get("/api/admin-organization", async (req, res) => {
     try {
-        const { admin } = req.body;
+        const { admin } = req.query;
         const organizations = await Organization.find({ admin });
         res.json(organizations);
     } catch (err) {
@@ -41,7 +41,7 @@ router.get("/api/admin-organization", async (req, res) => {
 
 router.get("/api/organization", async (req, res) => {
     try {
-        const { admin,name } = req.body;
+        const { admin,name } = req.query;
         const orga = await Organization.findOne({ admin,name });
         res.json(orga);
     } catch (err) {
@@ -123,10 +123,11 @@ router.post("/api/addtextuser", async (req, res) => {
     }
   });
   
+////////////////////////////////////////////////
 
 router.get("/api/alluser", async (req, res) => {
     try {
-        const { admin, organizationName } = req.body;
+        const { admin, organizationName } = req.query;
         const users = await User.find({ admin, organizationName });
         res.json(users);
     } catch (err) {
@@ -173,6 +174,136 @@ router.post("/api/favorite", async (req, res) => {
             { new: true }
         );
         res.json(user);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+/////////////////////////////////////////////////////
+
+router.get("/api/admin-Testimonials", async (req, res) => {
+    try {
+        const { admin } = req.query;
+        const organizations = await User.find({ admin });
+        res.json(organizations.length);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/avgrating", async (req, res) => {
+    try {
+        const { admin } = req.query;
+        const organizations = await User.find({ admin });
+        var sum = 0;
+        for (var i = 0; i < organizations.length; i++) {
+            sum += organizations[i].star;
+        }
+        var avg = sum / organizations.length;
+        res.json(avg);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/testimonial-types", async (req, res) => {
+    try {
+        const { admin } = req.query;
+        const textCount = await User.countDocuments({ admin, text: { $exists: true } });
+        const videoCount = await User.countDocuments({ admin, video: { $exists: true } });
+        const totalCount = textCount + videoCount;
+        const textPercentage = ((textCount / totalCount) * 100).toFixed(2);
+        const videoPercentage = ((videoCount / totalCount) * 100).toFixed(2);
+        res.json({ textPercentage, videoPercentage });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/rating-distribution", async (req, res) => {
+    try {
+        const { admin } = req.query;
+        const ratings = await User.aggregate([
+            { $match: { admin } },
+            { $group: { _id: "$star", count: { $sum: 1 } } },
+            { $sort: { _id: -1 } }
+        ]);
+        const totalRatings = ratings.reduce((acc, rating) => acc + rating.count, 0);
+        const ratingDistribution = ratings.map(rating => ({
+            star: rating._id,
+            percentage: ((rating.count / totalRatings) * 100).toFixed(2)
+        }));
+        res.json(ratingDistribution);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/last5testimonials", async (req, res) => {
+    try {
+        const { admin } = req.query;
+        const testimonials = await User.find({ admin,text: { $exists: true } }).sort({ _id: -1 }).limit(5);
+        res.json(testimonials);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+////////////////////////////////////////////////////
+
+router.get("/api/organization-Testimonials", async (req, res) => {
+    try {
+        const { admin,organizationName } = req.query;
+        const organizations = await User.find({ admin,organizationName });
+        res.json(organizations.length);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/organization-avgrating", async (req, res) => {
+    try {
+        const { admin,organizationName } = req.query;
+        const organizations = await User.find({ admin, organizationName});
+        var sum = 0;
+        for (var i = 0; i < organizations.length; i++) {
+            sum += organizations[i].star;
+        }
+        var avg = sum / organizations.length;
+        res.json(avg);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/orga-testimonial-types", async (req, res) => {
+    try {
+        const { admin,organizationName } = req.query;
+        const textCount = await User.countDocuments({ admin, organizationName, text: { $exists: true } });
+        const videoCount = await User.countDocuments({ admin, organizationName, video: { $exists: true } });
+        const totalCount = textCount + videoCount;
+        const textPercentage = ((textCount / totalCount) * 100).toFixed(2);
+        const videoPercentage = ((videoCount / totalCount) * 100).toFixed(2);
+        res.json({ textPercentage, videoPercentage });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.get("/api/orga-rating-distribution", async (req, res) => {
+    try {
+        const { admin,organizationName } = req.query;
+        const ratings = await User.aggregate([
+            { $match: { admin,organizationName } },
+            { $group: { _id: "$star", count: { $sum: 1 } } },
+            { $sort: { _id: -1 } }
+        ]);
+        const totalRatings = ratings.reduce((acc, rating) => acc + rating.count, 0);
+        const ratingDistribution = ratings.map(rating => ({
+            star: rating._id,
+            percentage: ((rating.count / totalRatings) * 100).toFixed(2)
+        }));
+        res.json(ratingDistribution);
     } catch (err) {
         res.status(500).send(err);
     }

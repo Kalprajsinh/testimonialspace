@@ -1,40 +1,45 @@
-"use client";
+"use client"
 
 import { 
   SidebarCloseIcon, 
   SidebarOpenIcon, 
   HomeIcon, 
-  UsersIcon, 
   SettingsIcon, 
   UserIcon,
   Star, 
   MessageSquare,
   Video,
   Plus,
-  Heart
+  Heart,
+  Text,
+  Code2,
 } from "lucide-react";
-import axios from "axios";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import Link from 'next/link';
+import Link from "next/link";
+import axios from "axios";
+import { useParams } from 'next/navigation'
 
-export default function Dashboard() {
+export default function BlogPost() 
+{
+
+  const params = useParams<{ organame: string }>()
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [TotalOrganization, setTotalOrganization] = useState(0);
-  const [Organization, setOrganization] = useState([]);
+  const [alltestimonial, setalltestimonial] = useState([]);
   const [TotalTestimonials, setTotalTestimonials] = useState(0);
   const [avgrating, setavgrating] = useState(0);
   const [testimonialData, setTestimonialData] = useState({
     textPercentage: 0,
     videoPercentage: 0
   });
-  const [last5testimonial, setlast5testimonial] = useState([]);
   const [ratingData, setRatingData] = useState([]);
+
   const { user } = useUser();
 
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+    const toggleSidebar = () => {
+      setSidebarOpen((prev) => !prev);
+    };
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,33 +59,35 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    async function getallorganizations() {
-      const respons = await axios.get("http://localhost:3001/api/admin-organization",{
-        params: { admin: user?.fullName }
+    async function alltestimonial(){
+      const respons = await axios.get("http://localhost:3001/api/alluser",{
+        params: { admin: user?.fullName,organizationName:params.organame }
       });
-      setOrganization(respons.data);
-      setTotalOrganization(respons.data.length);
+      console.log(respons.data);
+      setalltestimonial(respons.data);
     }
+
     async function getalltestimonial() {
-      const respons = await axios.get("http://localhost:3001/api/admin-Testimonials",{
-        params: { admin: user?.fullName }
+      const respons = await axios.get("http://localhost:3001/api/organization-Testimonials",{
+        params: { admin: user?.fullName,organizationName:params.organame }
       });
       setTotalTestimonials(respons.data);
     }
     async function getavgrating() {
-      const respons = await axios.get("http://localhost:3001/api/avgrating",{
-        params: { admin: user?.fullName }
+      const respons = await axios.get("http://localhost:3001/api/organization-avgrating",{
+        params: { admin: user?.fullName,organizationName:params.organame }
       });
+      // console.log(params.organame);
       setavgrating(respons.data);
     }
 
     async function fetchTestimonialTypes() {
       try {
-        const response = await axios.get("http://localhost:3001/api/testimonial-types", {
-          params: { admin: user?.fullName },
+        const response = await axios.get("http://localhost:3001/api/orga-testimonial-types", {
+          params: { admin: user?.fullName,organizationName:params.organame },
         });
         const data = response.data;
-        console.log(data);
+        // console.log(data);
         setTestimonialData({
           textPercentage: parseFloat(data.textPercentage),
           videoPercentage: parseFloat(data.videoPercentage),
@@ -91,38 +98,24 @@ export default function Dashboard() {
     }
     async function fetchRatingDistribution() {
       try {
-        const response = await axios.get("http://localhost:3001/api/rating-distribution", {
-          params: { admin: user?.fullName },
+        const response = await axios.get("http://localhost:3001/api/orga-rating-distribution", {
+          params: { admin: user?.fullName,organizationName:params.organame },
         });
         const data = response.data;
-        console.log(data);
+        // console.log(data);
         setRatingData(data);
       } catch (err) {
         console.error("Error fetching rating distribution:", err);
       }
     }
-    
-    async function fetchlast5() {
-      try {
-        const response = await axios.get("http://localhost:3001/api/last5testimonials", {
-          params: { admin: user?.fullName },
-        });
-        const data = response.data;
-        console.log(data);
-        setlast5testimonial(data);
-      } catch (err) {
-        console.error("Error fetching rating distribution:", err);
-      }
-    }
 
-    getallorganizations();
     getalltestimonial();
     getavgrating();
     fetchTestimonialTypes();
     fetchRatingDistribution();
-    fetchlast5();
+    alltestimonial();
 
-  }, [user?.fullName]);
+  }, [user?.fullName , params.organame]);
 
   return (
     <div className="w-full h-screen bg-zinc-950 flex">
@@ -151,20 +144,38 @@ export default function Dashboard() {
           <ul>
             {sidebarOpen ? (
               <>
-              <Link href={'/dashboard'}>
+                <Link href={'/dashboard'}>
                 <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                   <HomeIcon className="w-5 h-5" />
                   <span>Dashboard</span>
                 </li>
               </Link>
-                {Organization.map( (orga:any) => (
-                  <Link key={orga._id} href={`/organization/${orga.name}`}>           
-                    <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
-                      <UsersIcon className="w-5 h-5" />
-                      <span>{orga.name}</span>
-                      </li>
-                  </Link>
-                ))}
+              
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <MessageSquare className="w-5 h-5" />
+                <span>All Testimonials</span>
+                </li>
+        
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <Text className="w-5 h-5" />
+                <span>Text Testimonials</span>
+                </li>
+             
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <Video className="w-5 h-5" />
+                <span>Video Testimonials</span>
+                </li>
+             
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <Heart className="w-5 h-5" />
+                <span>Favorite Testimonials</span>
+                </li>
+
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <Code2 className="w-5 h-5" />
+                <span>Embed Code</span>
+                </li>
+             
                 <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                   <UserIcon className="w-5 h-5" />
                   <span>Profile</span>
@@ -190,13 +201,12 @@ export default function Dashboard() {
           </ul>
         </nav>
       </div>
-
+{/* ////////////////////////////////////// */}
       <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
             <h2 className="">Total Testimonials</h2>
             <div className="text-2xl font-bold">{TotalTestimonials}</div>
-            <p className="text-xs text-muted-foreground">from {TotalOrganization} Organization</p>
           </div>
           <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
             <h2 className="">Avg. Rating</h2>
@@ -281,62 +291,13 @@ export default function Dashboard() {
 
        </div>
        <div className="mt-6 text-white">
-        <h2 className="text-xl font-bold">Your Testimonial Spaces</h2>
+        <h2 className="text-xl font-bold">Your Testimonials</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-        {Organization.map((org:any) => (
-              <div key={org._id} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
-                <div className="flex items-center justify-between">
-                <div>
-                <h3 className="text-lg font-semibold">{org.name}</h3>
-                <p className="text-sm text-muted-foreground">{org.title}</p> 
-                </div>
-                <img
-                  src={`data:image/png;base64,${org.logo}`} 
-                  className="w-10 h-10 rounded-full"
-                />
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                  <div>
-                  <div className="text-muted-foreground">Testimonials</div>
-                  <div className="font-medium">35</div>
-                </div>
-                <div className="flex gap-3">
-                    <div className="text-muted-foreground">Created At</div>
-                    <div className="">: {new Date(org.createdAt).toLocaleDateString('en-GB')}</div> 
-                  </div>
-                </div>
-                
-                <div className="flex justify-between mt-4">
-                <Link href={`/organization/${org.name}`}>         
-                  <button className="px-4 py-2 text-sm border rounded-md border-muted hover:bg-zinc-800 cursor-pointer">
-                    Manage
-                  </button>
-                  </Link>
-                  <button className="px-4 py-2 text-sm border rounded-md border-muted hover:bg-zinc-800 cursor-pointer">
-                    Embed
-                  </button>
-                </div>
-              </div>
-            ))}
-
-          <div className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800">
-            <div className="rounded-full bg-zinc-900 p-3">
-              <Plus className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <h3 className="mt-3 font-medium">Create New Organization</h3>
-            <p className="mt-1 text-center text-sm text-muted-foreground">
-              Add a new testimonial collection for another product or service
-            </p>
-          </div>
-        </div>
-      </div>
-      <h2 className="text-xl mt-6 font-bold">Recent Testimonials</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-3">
-            {last5testimonial.map((testimonial:any, index) => (
+            {alltestimonial.map((testimonial:any, index) => (
               <div key={index} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
                 <div className="flex justify-between">
                   <div className="flex items-center gap-4 mb-6">
-                    <img 
+                    <img  
                       src={`data:image/png;base64,${testimonial.photo}`} 
                       alt={testimonial.name}
                       className="w-10 h-10 rounded-full object-cover"
@@ -364,7 +325,55 @@ export default function Dashboard() {
             ))}
           </div>
       </div>
+      </div>
       
     </div>
-  );
+  )
 }
+
+
+
+// const params = useParams();
+//       const query = new URLSearchParams(window.location.search);
+//       const testimonialType = query.get('testimonial');
+
+//       let mainContent;
+
+//       switch (testimonialType) {
+//         case 'all':
+//           mainContent = (
+//             <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+              
+//             </div>
+//           );
+//           break;
+//         case 'text':
+//           mainContent = (
+//             <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+              
+//             </div>
+//           );
+//           break;
+//         case 'video':
+//           mainContent = (
+//             <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+              
+//             </div>
+//           );
+//           break;
+//         case 'fevrate':
+//           mainContent = (
+//             <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+              
+//             </div>
+//           );
+//           break;
+//         default:
+//           mainContent = (
+//             <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+//               <h2 className="text-xl font-bold">Please select a valid testimonial type</h2>
+//             </div>
+//           );
+//       }
+
+// return mainContent;

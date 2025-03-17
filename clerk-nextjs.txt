@@ -88,3 +88,126 @@ export default function HomePage() {
   );
 }
 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Chart</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Styling the input boxes and button */
+    .input-container {
+      margin: 20px;
+    }
+    .input-container label {
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    .input-container input {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 50px;
+      text-align: center;
+    }
+    .input-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Input Form to enter data for each category -->
+  <div class="input-container">
+    <label for="category1">Category 1:</label>
+    <input type="number" id="category1" value="15">
+    <label for="category2">Category 2:</label>
+    <input type="number" id="category2" value="12">
+    <label for="category3">Category 3:</label>
+    <input type="number" id="category3" value="25">
+    <label for="category4">Category 4:</label>
+    <input type="number" id="category4" value="14">
+    <label for="category5">Category 5:</label>
+    <input type="number" id="category5" value="30">
+    <label for="category6">Category 6:</label>
+    <input type="number" id="category6" value="20">
+    <button onclick="updateChart()">Update Chart</button>
+  </div>
+
+  <svg version="1.1" style="font-family: Roboto; font-size: 12px;" xmlns="http://www.w3.org/2000/svg" width="650" height="400" viewBox="0 0 650 400" aria-hidden="false" aria-label="Interactive chart">
+    <defs aria-hidden="true">
+      <clipPath>
+        <rect x="0" y="0" width="596" height="279" fill="none"></rect>
+      </clipPath>
+    </defs>
+    <rect fill="#ffffff" x="0" y="0" width="650" height="400" rx="0" ry="0" aria-hidden="true"></rect>
+    <rect fill="none" x="44" y="47" width="596" height="279" aria-hidden="true"></rect>
+    <g data-z-index="1" aria-hidden="true">
+      <path fill="none" stroke="#e6e6e6" stroke-width="1" d="M 44 326.5 L 640 326.5" opacity="1"></path>
+      <path fill="none" stroke="#e6e6e6" stroke-width="1" d="M 44 46.5 L 640 46.5" opacity="1"></path>
+      <path fill="none" stroke="#e6e6e6" stroke-width="1" d="M 44 256.5 L 640 256.5" opacity="1"></path>
+      <path fill="none" stroke="#e6e6e6" stroke-width="1" d="M 44 187.5 L 640 187.5" opacity="1"></path>
+      <path fill="none" stroke="#e6e6e6" stroke-width="1" d="M 44 117.5 L 640 117.5" opacity="1"></path>
+    </g>
+    <g data-z-index="2" aria-hidden="true">
+      <path fill="none" stroke="#ccd6eb" stroke-width="1" d="M 44 326.5 L 640 326.5"></path>
+    </g>
+    <!-- Bar Graph: Representing the Categories -->
+    <g id="bars" data-z-index="3" aria-hidden="false">
+      <!-- Bars will be updated dynamically by JavaScript -->
+      <rect x="75" y="210" width="36" height="116" fill="#6f58e9" opacity="1"></rect>
+      <rect x="174" y="221" width="36" height="105" fill="#6f58e9" opacity="1"></rect>
+      <rect x="273" y="150" width="36" height="176" fill="#6f58e9" opacity="1"></rect>
+      <rect x="373" y="213" width="36" height="113" fill="#6f58e9" opacity="1"></rect>
+      <rect x="472" y="126" width="36" height="200" fill="#6f58e9" opacity="1"></rect>
+      <rect x="571" y="181" width="36" height="145" fill="#6f58e9" opacity="1"></rect>
+    </g>
+    <text font-family='Roboto-Regular,Roboto' x="325" text-anchor="middle" data-z-index="4" style="color: rgb(51, 51, 51); font-size: 18px; fill: rgb(51, 51, 51);" y="24" aria-hidden="true">Chart title</text>
+    <g data-z-index="7" aria-hidden="true">
+      <text font-family='Roboto-Regular,Roboto' x="93.66666666666333" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 1</text>
+      <text font-family='Roboto-Regular,Roboto' x="193.00000000000335" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 2</text>
+      <text font-family='Roboto-Regular,Roboto' x="292.3333333333333" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 3</text>
+      <text font-family='Roboto-Regular,Roboto' x="391.66666666667334" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 4</text>
+      <text font-family='Roboto-Regular,Roboto' x="491.00000000000335" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 5</text>
+      <text font-family='Roboto-Regular,Roboto' x="590.3333333333334" text-anchor="middle" transform="translate(0,0)" style="color: rgb(102, 102, 102); cursor: default; font-size: 11px; fill: rgb(102, 102, 102);" y="345" opacity="1">Category 6</text>
+    </g>
+    <!-- Y-axis Labels -->
+  </svg>
+
+  <script>
+    function updateChart() {
+      // Get values from input fields
+      const category1 = parseInt(document.getElementById("category1").value) || 0;
+      const category2 = parseInt(document.getElementById("category2").value) || 0;
+      const category3 = parseInt(document.getElementById("category3").value) || 0;
+      const category4 = parseInt(document.getElementById("category4").value) || 0;
+      const category5 = parseInt(document.getElementById("category5").value) || 0;
+      const category6 = parseInt(document.getElementById("category6").value) || 0;
+
+      // Update the heights of the bars based on the input values
+      const bars = document.getElementById("bars").children;
+      bars[0].setAttribute("height", category1);
+      bars[0].setAttribute("y", 326 - category1);  // Adjust position
+
+      bars[1].setAttribute("height", category2);
+      bars[1].setAttribute("y", 326 - category2);
+
+      bars[2].setAttribute("height", category3);
+      bars[2].setAttribute("y", 326 - category3);
+
+      bars[3].setAttribute("height", category4);
+      bars[3].setAttribute("y", 326 - category4);
+
+      bars[4].setAttribute("height", category5);
+      bars[4].setAttribute("y", 326 - category5);
+
+      bars[5].setAttribute("height", category6);
+      bars[5].setAttribute("y", 326 - category6);
+    }
+  </script>
+</body>
+</html>
