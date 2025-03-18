@@ -89,6 +89,7 @@ export default function Dashboard() {
         console.error("Error fetching testimonial types:", err);
       }
     }
+    
     async function fetchRatingDistribution() {
       try {
         const response = await axios.get("http://localhost:3001/api/rating-distribution", {
@@ -176,9 +177,11 @@ export default function Dashboard() {
               </>
             ) : (
               <>
+              <Link href={'/dashboard'}>
                 <li className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                   <HomeIcon className="w-6 h-6" />
                 </li>
+              </Link>
                 <li className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                   <UserIcon className="w-6 h-6" />
                 </li>

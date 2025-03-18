@@ -137,7 +137,7 @@ router.get("/api/alluser", async (req, res) => {
 
 router.get("/api/textuser", async (req, res) => {
     try {
-        const { admin, organizationName } = req.body;
+        const { admin, organizationName } = req.query;
         const users = await User.find({ admin, organizationName, text: { $exists: true } });
         res.json(users);
     } catch (err) {
@@ -147,7 +147,7 @@ router.get("/api/textuser", async (req, res) => {
 
 router.get("/api/videouser", async (req, res) => {
     try {
-        const { admin, organizationName } = req.body;
+        const { admin, organizationName } = req.query;
         const users = await User.find({ admin, organizationName, video: { $exists: true } });
         res.json(users);
     } catch (err) {
@@ -157,7 +157,7 @@ router.get("/api/videouser", async (req, res) => {
 
 router.get("/api/favorite", async (req, res) => {
     try {
-        const { admin, organizationName } = req.body;
+        const { admin, organizationName } = req.query;
         const users = await User.find({ admin, organizationName, favorite: true });
         res.json(users);
     } catch (err) {
