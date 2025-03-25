@@ -5,6 +5,7 @@ import {
   MessageSquare,
   Video,
   Heart,
+  CopyIcon,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ const Dashboard = () => {
       });
       console.log(respons.data);
       setalltestimonial(respons.data);
-    }
+    } 
 
     async function getalltestimonial() {
       const respons = await axios.get("http://localhost:3001/api/organization-Testimonials",{
@@ -83,6 +84,7 @@ const Dashboard = () => {
     fetchRatingDistribution();
     alltestimonial();
 
+    
   }, [user?.fullName , params.organame]);
 
     return(
@@ -174,6 +176,54 @@ const Dashboard = () => {
         </div>
   
          </div>
+
+         <div className="mt-6">
+  <div className="mb-6">
+    <h2 className="text-xl font-bold text-white">Collection Form</h2>
+    <p className="text-sm text-gray-300">Share this form with your customers to collect testimonials.</p>
+  </div>
+  <div className="flex flex-col gap-6 sm:flex-row">
+    <div className="flex-1 rounded-lg p-6 shadow-md bg-zinc-900">
+      <h3 className="mb-3 text-lg font-semibold text-white">Collection Link</h3>
+      <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
+      <div className="font-mono text-sm flex items-center justify-between">
+      <span className="text-orange-500">https://testimonial-hub.com/submit/main-website</span> 
+
+        <button onClick={()=>{
+          navigator.clipboard.writeText(`
+            https://testimonial-hub.com/submit/main-website
+            `);
+          }} 
+          className="hover:text-blue-400 cursor-pointer"
+        >
+          <CopyIcon className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+    </div>
+
+    <div className="flex-1 rounded-lg p-6 shadow-md bg-zinc-900">
+      <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
+      <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
+      <div className="font-mono text-sm flex items-center justify-between">
+        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
+
+        <button onClick={()=>{
+          navigator.clipboard.writeText(`
+            <iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"></iframe>
+            `);
+          }} 
+          className="hover:text-blue-400 cursor-pointer"
+        >
+          <CopyIcon className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+
          <div className="mt-6 text-white">
           <h2 className="text-xl font-bold">Your Testimonials</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
@@ -182,7 +232,7 @@ const Dashboard = () => {
                   <div className="flex justify-between">
                     <div className="flex items-center gap-4 mb-6">
                       <img  
-                        src={`data:image/png;base64,${testimonial.photo}`} 
+                        src={`${testimonial.photo}`} 
                         alt={testimonial.name}
                         className="w-10 h-10 rounded-full object-cover"
                         />

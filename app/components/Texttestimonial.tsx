@@ -26,7 +26,7 @@ function Texttestimonial() {
       return (
       <div className="p-8 pt-20 min-h-screen">
         <div className="mt-6 text-white">
-          <h2 className="text-2xl font-extrabold border-b pb-2 border-gray-700">Text Testimonials</h2>
+          <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">Text Testimonials</h2>
           <div className="mt-6 space-y-6">
                 {alltestimonial.map((testimonial: any, index) => (
                 <div

@@ -5,7 +5,6 @@ import {
   SidebarOpenIcon, 
   HomeIcon, 
   SettingsIcon, 
-  UserIcon,
   MessageSquare,
   Video,
   Heart,
@@ -21,13 +20,14 @@ import Texttestimonial from "@/app/components/Texttestimonial";
 import Videotestimonial from "@/app/components/Videotestimonial";
 import Favoritetestimonial from "@/app/components/Favoritetestimonial";
 import Settings from "@/app/components/Settings";
+import { useParams } from 'next/navigation'
 
 
 
 export default function BlogPost() 
 {
 
-  // const params = useParams<{ organame: string }>()
+  const params = useParams<{ organame: string }>()
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [Maincontent, setMaincontent] = useState("dashboard");
@@ -57,7 +57,7 @@ export default function BlogPost()
 
   return (
     <div className="w-full h-screen bg-zinc-950 flex">
-      {/* Sidebar */}
+
       <div
         className={`${
           sidebarOpen ? "w-64" : "w-10"
@@ -108,12 +108,12 @@ export default function BlogPost()
                 <Heart className="w-5 h-5" />
                 <span>Favorite Testimonials</span>
                 </li>
-
+                <Link href={`/embed/${params.organame}`}>                
                 <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                 <Code2 className="w-5 h-5" />
                 <span>Embed Code</span>
                 </li>
-   
+                </Link>
                 <li onClick={()=> {setMaincontent("settings")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                   <SettingsIcon className="w-5 h-5" />
                   <span>Settings</span>
@@ -155,15 +155,15 @@ export default function BlogPost()
           </ul>
         </nav>
       </div>
-{/* ////////////////////////////////////// */}
-<div className="flex-1 bg-zinc-950 text-white overflow-y-auto">
-  {Maincontent === "dashboard" && <Dashboard />}
-  {Maincontent === "all" && <Alltestimonial />}
-  {Maincontent === "text" && <Texttestimonial />}
-  {Maincontent === "video" && <Videotestimonial />}
-  {Maincontent === "favorite" && <Favoritetestimonial />}
-  {Maincontent === "settings" && <Settings />}
-</div>
+
+      <div className="flex-1 bg-zinc-950 text-white overflow-y-auto">
+        {Maincontent === "dashboard" && <Dashboard />}
+        {Maincontent === "all" && <Alltestimonial />}
+        {Maincontent === "text" && <Texttestimonial />}
+        {Maincontent === "video" && <Videotestimonial />}
+        {Maincontent === "favorite" && <Favoritetestimonial />}
+        {Maincontent === "settings" && <Settings />}
+      </div>
 
     </div>
   )

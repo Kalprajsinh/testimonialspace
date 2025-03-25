@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .testimonial-container {
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.testimonial-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+.testimonial-item.hidden {
+  opacity: 0;
+}
+
+.testimonial-container .testimonial-item {
+  width: 100%;
+  max-width: 600px;
+}
+
+.testimonial-item p {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4A4A4A;
+}
+
+.testimonial-item h2 {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.testimonial-item img {
+  border-radius: 50%;
+  border: 2px solid #4C51BF;
+}
+
+    </style>
+</head>
+<body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <div id="testimonial" admin="Rana Kalpraj" organizationName="orga2"></div>
+    <script src="http://localhost:3000/file.js"></script>
+</body>
+</html>
+

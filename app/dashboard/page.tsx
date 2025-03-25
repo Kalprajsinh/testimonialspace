@@ -116,8 +116,8 @@ export default function Dashboard() {
       }
     }
 
-    getallorganizations();
     getalltestimonial();
+    getallorganizations();
     getavgrating();
     fetchTestimonialTypes();
     fetchRatingDistribution();
@@ -299,11 +299,11 @@ export default function Dashboard() {
                 />
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                  <div>
+                  {/* <div>
                   <div className="text-muted-foreground">Testimonials</div>
                   <div className="font-medium">35</div>
-                </div>
-                <div className="flex gap-3">
+                </div> */}
+                <div className="flex gap-3 mt-5">
                     <div className="text-muted-foreground">Created At</div>
                     <div className="">: {new Date(org.createdAt).toLocaleDateString('en-GB')}</div> 
                   </div>
@@ -315,21 +315,24 @@ export default function Dashboard() {
                     Manage
                   </button>
                   </Link>
+                  <Link href={`/embed/${org.name}`}>
                   <button className="px-4 py-2 text-sm border rounded-md border-muted hover:bg-zinc-800 cursor-pointer">
                     Embed
                   </button>
+                  </Link>
                 </div>
               </div>
             ))}
-
           <div className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800">
-            <div className="rounded-full bg-zinc-900 p-3">
+            <Link href={`/create-organization`}>
+            <div className="rounded-full bg-zinc-900 p-3 place-self-center">
               <Plus className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="mt-3 font-medium">Create New Organization</h3>
+            <h3 className="mt-3 font-medium place-self-center">Create New Organization</h3>
             <p className="mt-1 text-center text-sm text-muted-foreground">
               Add a new testimonial collection for another product or service
             </p>
+          </Link>
           </div>
         </div>
       </div>
