@@ -65,15 +65,13 @@ function Collectionform() {
   // Handle form submission for text review
   const handleTextReviewSubmit = async () => {
     try {
-      const base64Text = btoa(reviewText); // Convert text to Base64
-
-      // Create the request payload with Base64 text
+     
       const response = await axios.post("http://localhost:3001/api/addtextuser", {
         admin,
         name,
         email,
         photo: photo ? await fileToBase64(photo) : '',
-        text: base64Text,
+        text: reviewText,
         star: starRating,
         organizationName: Organization.name,
         favorite

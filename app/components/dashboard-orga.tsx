@@ -11,6 +11,7 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from 'next/navigation'
+import Testimonialcard from "./Testimonialcard";
 
 
 const Dashboard = () => {
@@ -47,7 +48,9 @@ const Dashboard = () => {
         params: { admin: user?.fullName,organizationName:params.organame }
       });
       // console.log(params.organame);
-      setavgrating(respons.data);
+      if (respons.data != null) {
+        setavgrating(respons.data.toFixed(2));
+      }
     }
 
     async function fetchTestimonialTypes() {
@@ -187,11 +190,12 @@ const Dashboard = () => {
       <h3 className="mb-3 text-lg font-semibold text-white">Collection Link</h3>
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
       <div className="font-mono text-sm flex items-center justify-between">
-      <span className="text-orange-500">https://testimonial-hub.com/submit/main-website</span> 
+      
+      <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
         <button onClick={()=>{
           navigator.clipboard.writeText(`
-            https://testimonial-hub.com/submit/main-website
+            http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"
@@ -205,12 +209,12 @@ const Dashboard = () => {
     <div className="flex-1 rounded-lg p-6 shadow-md bg-zinc-900">
       <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
-      <div className="font-mono text-sm flex items-center justify-between">
-        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
+      <div className="font-mono text-xs flex items-center justify-between">
+        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
 
         <button onClick={()=>{
           navigator.clipboard.writeText(`
-            <iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"></iframe>
+            <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"
@@ -228,34 +232,7 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold">Your Testimonials</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
               {alltestimonial.map((testimonial:any, index) => (
-                <div key={index} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-4 mb-6">
-                      <img  
-                        src={`${testimonial.photo}`} 
-                        alt={testimonial.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                        />
-                      <div>
-                        <h4 className="font-bold">{testimonial.name}</h4>
-                        <p className="text-zinc-400 text-sm">{testimonial.email}</p>
-                      </div>
-                      </div>
-                      <div className="mt-4">
-                    {testimonial.favorite ? (
-                      <Heart className="text-pink-500 fill-pink-500 w-6 h-6" />
-                    ) : (
-                      <Heart className="text-pink-500 w-6 h-6" />
-                    )}
-                  </div>
-                      </div>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.star)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-zinc-300 leading-relaxed">"{testimonial.text}"</p>
-                </div>
+                <Testimonialcard key={index} index={index} testimonial={testimonial} />
               ))}
             </div>
         </div>

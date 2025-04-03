@@ -13,6 +13,7 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Favoritetestimonialtwo } from "@/app/components/Favoritetestimonial";
 
 export default function BlogPost() 
 {
@@ -190,6 +191,8 @@ export default function BlogPost()
         </div>
       </div>
   </div>
+
+  <Favoritetestimonialtwo />
 
   <div className="mt-6">
   <div className="mb-6">
