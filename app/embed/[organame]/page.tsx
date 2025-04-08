@@ -49,12 +49,12 @@ export default function BlogPost()
 
 
   return (
-    <div className="w-full bg-zinc-950 flex">
+    <div className="w-full h-full bg-zinc-950 sm:flex">
       {/* Sidebar */}
       <div
         className={`${
           sidebarOpen ? "w-64" : "w-10"
-        } h-[200hvm] bg-zinc-900 pt-16 text-white transition-all duration-300 shadow-lg`}
+        } h-[200hvm] bg-zinc-900 pt-16 text-white transition-all duration-300 shadow-lg hidden sm:block`}
       >
         <button 
           onClick={toggleSidebar} 
@@ -102,6 +102,12 @@ export default function BlogPost()
                 </li>
               </Link>
               
+                <Link href={`/organization/${params.organame}`}>
+                <li className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
+                <UsersIcon className="w-5 h-5" />
+                </li>
+              </Link>
+              
                 <li onClick={()=> {("settings")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                   <SettingsIcon className="w-5 h-5" />
                 </li>
@@ -119,7 +125,7 @@ export default function BlogPost()
     </div>
     <div className="space-y-6">
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
-        <div className="font-mono text-sm flex items-center justify-between w-60 sm:w-full">
+        <div className="font-mono text-sm flex items-center justify-between w-full">
 
         <pre id="codeBlock" className="overflow-x-auto whitespace-pre-wrap break-words">
           &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">"testimonial"</span> <span className="text-green-500">admin=</span><span className="text-orange-500">"{user?.fullName}"</span> <span className="text-green-500">organization=</span><span className="text-orange-500">"{params.organame}"</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
@@ -194,60 +200,53 @@ export default function BlogPost()
 
   <Favoritetestimonialtwo />
 
-  <div className="mt-6">
-  <div className="mb-6">
-    <h2 className="text-2xl font-bold text-white">Collection Form</h2>
-    <p className="text-sm text-gray-300 mt-2">Share this form with your customers to collect testimonials.</p>
-    <hr className="text-white mt-2" />
-  </div>
-
-  <div className="flex flex-col gap-6 sm:flex-row">
-    
-    <div className="flex-1 w-full rounded-lg border p-6 shadow-md bg-zinc-900">
-      <h3 className="mb-3 text-lg font-semibold text-white">Collection Link</h3>
-      <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md w-full">
-        <div className="font-mono text-sm flex items-center justify-between">
-          <span className="text-orange-500 break-all">https://testimonial-hub.com/submit/main-website</span> 
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText("https://testimonial-hub.com/submit/main-website");
-            }} 
-            className="hover:text-blue-400 cursor-pointer"
-          >
-            <CopyIcon className="w-5 h-5" />
-          </button>
-        </div>
+      <div className="mt-6">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-white">Collection Form</h2>
+        <p className="text-sm text-gray-300">Share this form with your customers to collect testimonials.</p>
       </div>
-    </div>
+      <div className="flex flex-col gap-6 lg:flex-row">
+        <div className="flex-1 rounded-lg p-6 shadow-md bg-zinc-900">
+          <h3 className="mb-3 text-lg font-semibold text-white">Collection Link</h3>
+          <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
+          <div className="font-mono text-sm flex items-center justify-between">
+          
+          <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
-    
-        <div className="flex-1 w-full rounded-lg border p-6 shadow-md bg-zinc-900">
-          <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
-          <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md w-full">
-            <div className="font-mono text-sm flex items-center justify-between overflow-x-auto">
-              <span className="text-orange-500 break-all">
-                &lt;iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"&gt;&lt;/iframe&gt;
-              </span>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    '<iframe src="https://testimonial-hub.com/embed-form/main-website" width="100%" height="400"></iframe>'
-                  );
-                }} 
-                className="hover:text-blue-400 cursor-pointer"
-              >
-                <CopyIcon className="w-5 h-5" />
-              </button>
-            </div>
+            <button onClick={()=>{
+              navigator.clipboard.writeText(`
+                http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
+                `);
+              }} 
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              <CopyIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
+        </div>
 
+        <div className="flex-1 rounded-lg p-6 shadow-md bg-zinc-900">
+          <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
+          <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
+          <div className="font-mono text-xs flex items-center justify-between">
+            <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
+
+            <button onClick={()=>{
+              navigator.clipboard.writeText(`
+                <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
+                `);
+              }} 
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              <CopyIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
-
-
       </div>
-
     </div>
   )
 }

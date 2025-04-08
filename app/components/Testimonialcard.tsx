@@ -1,13 +1,16 @@
+import axios from 'axios';
 import { Heart, Star } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface Testimonial {
+  admin: string;
   name: string;
   email: string;
   photo: string;
   star: number;
   text: string;
   favorite: boolean;
+  organizationName: String;
 }
 
 interface TestimonialCardProps {
@@ -16,6 +19,44 @@ interface TestimonialCardProps {
 }
 
 function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
+
+  const [fav,setfav] = useState(testimonial.favorite);
+
+  async function favoriteTestimonial() {
+    if(!fav) {
+    const responce = await axios.post('http://localhost:3001/api/favorite', {
+      admin:testimonial.admin, 
+      email:testimonial.email, 
+      organizationName:testimonial.organizationName
+    });
+
+    const data = responce.data;
+    console.log(data);
+    
+    if (responce.data) {
+      setfav(true);
+    } else {
+      console.log("error in favoriting testimonial");
+    }
+  }
+  else{
+    const responce = await axios.post('http://localhost:3001/api/favorite/remove', {
+      admin:testimonial.admin, 
+      email:testimonial.email, 
+      organizationName:testimonial.organizationName
+    });
+
+    const data = responce.data;
+    console.log(data);
+    
+    if (responce.data) {
+      setfav(false);
+    } else {
+      console.log("error in unfavoriting testimonial");
+  }
+  }
+}
+
   return (
     <div key={index} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
       <div className="flex justify-between">
@@ -30,13 +71,13 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
             <p className="text-zinc-400 text-sm">{testimonial.email}</p>
           </div>
         </div>
-        <div className="mt-4">
-          {testimonial.favorite ? (
+        <button onClick={favoriteTestimonial} className="text-gray-500 hover:text-gray-300 transition-colors cursor-pointer">
+          {fav ? (
             <Heart className="text-pink-500 fill-pink-500 w-6 h-6" />
           ) : (
-            <Heart className="text-pink-500 w-6 h-6" />
+            <Heart className="text-gray-500 w-6 h-6 hover:text-pink-500 hover:fill-pink-500 transition-colors" />
           )}
-        </div>
+        </button>
       </div>
       <div className="flex gap-1 mb-4">
         {[...Array(testimonial.star)].map((_, i) => (

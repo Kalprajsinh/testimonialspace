@@ -179,6 +179,38 @@ router.post("/api/favorite", async (req, res) => {
     }
 });
 
+router.post("/api/favorite/remove", async (req, res) => {
+    try {
+        const { admin, email , organizationName } = req.body;
+        const user = await User.findOneAndUpdate(
+            { admin, email, organizationName },
+            { favorite: false },
+            { new: true }
+        );
+        res.json(user);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.post("/api/delete/testimonial", async (req, res) => {
+    try {
+        const { admin, email, organizationName } = req.body;
+
+        // Find and delete the user testimonial
+        const deletedUser = await User.findOneAndDelete({ admin, email, organizationName });
+
+        if (!deletedUser) {
+            return res.status(404).send("Testimonial not found");
+        }
+
+        res.status(200).send("Testimonial deleted successfully");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+
 /////////////////////////////////////////////////////
 
 router.get("/api/admin-Testimonials", async (req, res) => {

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { Star } from "lucide-react";
 
 interface OrganizationData {
   _id: string;
@@ -18,15 +19,11 @@ interface OrganizationData {
 function Collectionform() {
   const params = useParams<{ admin: string; organization: string }>();
   const [Organization, setOrganization] = useState<OrganizationData | null>(null);
-  const [showTextReviewPopup, setShowTextReviewPopup] = useState(false);
-  const [showVideoReviewPopup, setShowVideoReviewPopup] = useState(false);
-  const [reviewText, setReviewText] = useState('');
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [starRating, setStarRating] = useState(0);
-  const [email, setEmail] = useState('');
-  const [photo, setPhoto] = useState<File | null>(null);
   const [name, setName] = useState('');
-  const [favorite, setFavorite] = useState(false);
+  const [email, setEmail] = useState('');
+  const [reviewText, setReviewText] = useState('');
+  const [starRating, setStarRating] = useState(0);
+  const [photo, setPhoto] = useState<File | null>(null);
 
   const admin = decodeURIComponent(params.admin);
   const organization = decodeURIComponent(params.organization);
@@ -36,36 +33,24 @@ function Collectionform() {
       const response = await axios.get("http://localhost:3001/api/organization", {
         params: { admin: admin, name: organization }
       });
-
-      console.log(response.data);
       setOrganization(response.data);
     }
-
     fetchData();
   }, [admin, organization]);
 
-  if (!Organization) return <div className="pt-20 text-center">Loading...</div>;
-
-  const logoSrc = `data:image/jpeg;base64,${Organization.logo}`;
-
-  // Function to convert file to base64
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   };
 
-  // Handle form submission for text review
-  const handleTextReviewSubmit = async () => {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleSubmit = async () => {
     try {
-     
       const response = await axios.post("http://localhost:3001/api/addtextuser", {
         admin,
         name,
@@ -73,200 +58,102 @@ function Collectionform() {
         photo: photo ? await fileToBase64(photo) : '',
         text: reviewText,
         star: starRating,
-        organizationName: Organization.name,
-        favorite
+        organizationName: Organization?.name,
       });
-      console.log('Text review submitted:', response.data);
-      setShowTextReviewPopup(false); // Close the popup after submission
+      console.log("Review submitted:", response.data);
+      setShowSuccess(true);
+      setName('');
+      setEmail('');
+      setReviewText('');
+      setStarRating(0);
+      setPhoto(null);
+      setTimeout(() => setShowSuccess(false), 3000);
+
     } catch (error) {
-      console.error("Error submitting text review:", error);
+      console.error("Error submitting review:", error);
     }
   };
 
-  // Handle form submission for video review
-  const handleVideoReviewSubmit = async () => {
-    try {
-      if (videoFile) {
-        const base64Video = await fileToBase64(videoFile); // Convert video to Base64
+  if (!Organization) return <div className="pt-20 text-center text-gray-700">Loading...</div>;
 
-        // Create the request payload with Base64 video
-        const response = await axios.post("http://localhost:3001/api/addvideouser", {
-          admin,
-          name,
-          email,
-          photo: photo ? await fileToBase64(photo) : '',
-          video: base64Video,
-          star: starRating,
-          organizationName: Organization.name,
-          favorite
-        });
-        console.log('Video review submitted:', response.data);
-        setShowVideoReviewPopup(false); // Close the popup after submission
-      }
-    } catch (error) {
-      console.error("Error submitting video review:", error);
-    }
-  };
+  const logoSrc = `data:image/jpeg;base64,${Organization.logo}`;
 
   return (
-    <div className="pt-20 max-w-xl mx-auto text-center">
-      <h1 className="text-2xl font-bold">{Organization.title}</h1>
-      <p className="mt-2 text-gray-700">{Organization.message}</p>
-
-      <img src={logoSrc} alt="Organization Logo" className="mt-4 mx-auto w-40 h-40 object-cover rounded-lg" />
-
-      <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={() => setShowTextReviewPopup(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Text Review
-        </button>
-        <button
-          onClick={() => setShowVideoReviewPopup(true)}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-        >
-          Video Review
-        </button>
+    <div className="min-h-screen bg-white pt-24 px-4">
+      <div className=" max-w-2xl mx-auto bg-white border border-gray-200 p-6 rounded-xl shadow-md">
+      <div className="max-w-xl mx-auto text-center">
+        <img src={logoSrc} alt="Organization Logo" className="mx-auto w-24 h-24 object-cover rounded-full" />
+        <h1 className="text-3xl font-bold mt-4 text-gray-900">{Organization.title}</h1>
+        <p className="text-gray-600 mt-2">{Organization.message}</p>
       </div>
 
-      {/* Text Review Popup */}
-      {showTextReviewPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold">Submit Text Review</h2>
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="file"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              onChange={(e) => setPhoto(e.target.files ? e.target.files[0] : null)}
-            />
-            <textarea
-              placeholder="Write your review here..."
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-            />
-            <div className="mt-4">
-              <input
-                type="number"
-                max={5}
-                min={1}
-                value={starRating}
-                onChange={(e) => setStarRating(Number(e.target.value))}
-                className="w-16 p-2 border border-gray-300 rounded"
-                placeholder="Rating (1-5)"
-              />
-            </div>
-            <div className="mt-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={favorite}
-                  onChange={() => setFavorite(!favorite)}
-                />
-                Favorite
-              </label>
-            </div>
-            <div className="mt-4">
-              <button
-                onClick={handleTextReviewSubmit}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => setShowTextReviewPopup(false)}
-                className="ml-2 px-4 py-2 bg-gray-300 text-black rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+      {showSuccess && (
+        <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow-lg">
+          ✅ Your review was sent successfully!
         </div>
       )}
+      
+        <h2 className=" mt-10 text-xl font-semibold text-gray-800 text-center mb-6">Leave a Review</h2>
 
-      {/* Video Review Popup */}
-      {showVideoReviewPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold">Submit Video Review</h2>
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="file"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              onChange={(e) => setPhoto(e.target.files ? e.target.files[0] : null)}
-            />
+
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg"
+          />
+          <input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg"
+          />
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Your Photo</label>
             <input
               type="file"
-              accept="video/*"
-              className="mt-2 w-full p-2 border border-gray-300 rounded"
-              onChange={(e) => setVideoFile(e.target.files ? e.target.files[0] : null)}
+              accept="image/*"
+              onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:rounded-lg file:border-gray-300 file:text-sm file:bg-gray-50 hover:file:bg-gray-100"
             />
-            <div className="mt-4">
-              <input
-                type="number"
-                max={5}
-                min={1}
-                value={starRating}
-                onChange={(e) => setStarRating(Number(e.target.value))}
-                className="w-16 p-2 border border-gray-300 rounded"
-                placeholder="Rating (1-5)"
-              />
-            </div>
-            <div className="mt-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={favorite}
-                  onChange={() => setFavorite(!favorite)}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Overall Rating</label>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((num) => (
+                <Star
+                  key={num}
+                  className={`w-6 h-6 cursor-pointer ${
+                    starRating >= num ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                  }`}
+                  onClick={() => setStarRating(num)}
                 />
-                Favorite
-              </label>
-            </div>
-            <div className="mt-4">
-              <button
-                onClick={handleVideoReviewSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => setShowVideoReviewPopup(false)}
-                className="ml-2 px-4 py-2 bg-gray-300 text-black rounded-lg"
-              >
-                Close
-              </button>
+              ))}
+              <span className="ml-2 text-sm text-gray-500">{starRating} / 5</span>
             </div>
           </div>
+
+          <textarea
+            placeholder="Your review message"
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            rows={4}
+            className="w-full p-3 border border-gray-300 rounded-lg"
+          />
+
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
+          >
+            Submit Review
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

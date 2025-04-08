@@ -341,10 +341,13 @@ export default function Dashboard() {
       </div>
       <h2 className="text-xl mt-6 font-bold">Recent Testimonials</h2>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
-            {last5testimonial.map((testimonial:any, index) => (
-              <Testimonialcard key={index} index={index} testimonial={testimonial} />
-            ))}
+        {last5testimonial.map((testimonial:any, index) => (
+          <div key={`testimonial-${index}`}>
+            <Testimonialcard key={`testimonial-card-${index}`} index={index} testimonial={testimonial} />
+            <p className="-mt-6 flex justify-end mr-2 text-gray-500 text-xs">{testimonial.organizationName}</p>
           </div>
+        ))}
+        </div>
       </div>
       
     </div>

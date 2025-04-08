@@ -6,10 +6,9 @@ import {
   HomeIcon, 
   SettingsIcon, 
   MessageSquare,
-  Video,
   Heart,
-  Text,
   Code2,
+  ArrowLeftIcon,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
@@ -30,7 +29,7 @@ export default function BlogPost()
   const params = useParams<{ organame: string }>()
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [Maincontent, setMaincontent] = useState("dashboard");
+  const [Maincontent, setMaincontent] = useState("Dashboard");
 
   const { user } = useUser();
 
@@ -84,25 +83,26 @@ export default function BlogPost()
               <>
                 <Link href={'/dashboard'}>
                 <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
-                  <HomeIcon className="w-5 h-5" />
+                  <ArrowLeftIcon className="w-5 h-5" />
                   <span>Dashboard</span>
                 </li>
               </Link>
               
+                <li onClick={()=> {setMaincontent("Dashboard")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <HomeIcon className="w-5 h-5" />
+                <span>Home</span>
+                </li>
+
                 <li onClick={()=> {setMaincontent("all")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                 <MessageSquare className="w-5 h-5" />
                 <span>All Testimonials</span>
                 </li>
         
-                <li onClick={()=> {setMaincontent("text")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
-                <Text className="w-5 h-5" />
-                <span>Text Testimonials</span>
-                </li>
              
-                <li onClick={()=> {setMaincontent("video")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                {/* <li onClick={()=> {setMaincontent("video")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                 <Video className="w-5 h-5" />
                 <span>Video Testimonials</span>
-                </li>
+                </li> */}
              
                 <li onClick={()=> {setMaincontent("favorite")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                 <Heart className="w-5 h-5" />
@@ -123,29 +123,31 @@ export default function BlogPost()
               <>
                 <Link href={'/dashboard'}>
                 <li className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
-                  <HomeIcon className="w-5 h-5" />
+                  <ArrowLeftIcon className="w-5 h-5" />
                 </li>
               </Link>
               
+                <li onClick={()=> {setMaincontent("Dashboard")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
+                <HomeIcon className="w-5 h-5" />
+                </li>
                 <li onClick={()=> {setMaincontent("all")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                 <MessageSquare className="w-5 h-5" />
                 </li>
         
-                <li onClick={()=> {setMaincontent("text")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
-                <Text className="w-5 h-5" />
-                </li>
              
-                <li onClick={()=> {setMaincontent("video")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
+                {/*  <li onClick={()=> {setMaincontent("video")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                 <Video className="w-5 h-5" />
-                </li>
+                </li> */}
              
                 <li onClick={()=> {setMaincontent("favorite")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                 <Heart className="w-5 h-5" />
                 </li>
 
+                <Link href={`/embed/${params.organame}`}>
                 <li className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                 <Code2 className="w-5 h-5" />
                 </li>
+                </Link>
    
                 <li onClick={()=> {setMaincontent("settings")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                   <SettingsIcon className="w-5 h-5" />
@@ -157,7 +159,7 @@ export default function BlogPost()
       </div>
 
       <div className="flex-1 bg-zinc-950 text-white overflow-y-auto">
-        {Maincontent === "dashboard" && <Dashboard />}
+        {Maincontent === "Dashboard" && <Dashboard />}
         {Maincontent === "all" && <Alltestimonial />}
         {Maincontent === "text" && <Texttestimonial />}
         {Maincontent === "video" && <Videotestimonial />}
