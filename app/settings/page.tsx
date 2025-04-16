@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
@@ -24,7 +26,7 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchOrganizations() {
       try {
-        const response = await axios.get("http://localhost:3001/api/admin-organization", {
+        const response = await axios.get("https://testimonialspace.onrender.com/api/admin-organization", {
           params: { admin: user?.fullName },
         });
         setOrganizations(response.data);
@@ -41,7 +43,7 @@ export default function SettingsPage() {
   const handleDelete = async (orgId: string) => {
     if (confirm("Are you sure you want to delete this organization?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/delete-organization`, {
+        await axios.delete(`https://testimonialspace.onrender.com/api/delete-organization`, {
           data: { admin: user?.fullName, organizationId: orgId },
         });
         setOrganizations((prev) => prev.filter((org: any) => org._id !== orgId));

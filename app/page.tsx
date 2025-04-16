@@ -6,6 +6,8 @@ import { SignUpButton } from "@clerk/nextjs";
 import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
 
+export const runtime = "edge";
+
 export default function HomePage() {
   const { user, isSignedIn } = useUser();
   console.log(user);

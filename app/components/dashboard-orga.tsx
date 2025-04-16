@@ -1,10 +1,9 @@
-"use client"
+"use client";
+
+export const runtime = "edge";
 
 import { 
   Star, 
-  MessageSquare,
-  Video,
-  Heart,
   CopyIcon,
   CheckIcon,
 } from "lucide-react";
@@ -37,7 +36,7 @@ const Dashboard = () => {
 
   useEffect(() => {
       async function alltestimonial(){
-        const respons = await axios.get("http://localhost:3001/api/alluser",{
+        const respons = await axios.get("https://testimonialspace.onrender.com/api/alluser",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       console.log(respons.data);
@@ -45,13 +44,13 @@ const Dashboard = () => {
     } 
     
     async function getalltestimonial() {
-      const respons = await axios.get("http://localhost:3001/api/organization-Testimonials",{
+      const respons = await axios.get("https://testimonialspace.onrender.com/api/organization-Testimonials",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       setTotalTestimonials(respons.data);
     }
     async function getavgrating() {
-      const respons = await axios.get("http://localhost:3001/api/organization-avgrating",{
+      const respons = await axios.get("https://testimonialspace.onrender.com/api/organization-avgrating",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       // console.log(params.organame);
@@ -62,7 +61,7 @@ const Dashboard = () => {
     
     async function fetchTestimonialTypes() {
       try {
-        const response = await axios.get("http://localhost:3001/api/orga-testimonial-types", {
+        const response = await axios.get("https://testimonialspace.onrender.com/api/orga-testimonial-types", {
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;
@@ -77,7 +76,7 @@ const Dashboard = () => {
     }
     async function fetchRatingDistribution() {
       try {
-        const response = await axios.get("http://localhost:3001/api/orga-rating-distribution", {
+        const response = await axios.get("https://testimonialspace.onrender.com/api/orga-rating-distribution", {
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;

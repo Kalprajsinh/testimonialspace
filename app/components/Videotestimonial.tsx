@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import axios from 'axios';
 import { useUser } from '@clerk/nextjs';
-import { Heart, Star } from 'lucide-react';
 import Testimonialhorizontal from './Testimonialhorizontal';
 
 function Videotestimonial() {
@@ -13,7 +12,7 @@ function Videotestimonial() {
   
     useEffect(() => {
       async function alltestimonial(){
-        const respons = await axios.get("http://localhost:3001/api/videouser",{
+        const respons = await axios.get("https://testimonialspace.onrender.com/api/videouser",{
           params: { admin: user?.fullName,organizationName:params.organame }
         });
         console.log(respons.data);

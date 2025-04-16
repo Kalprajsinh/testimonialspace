@@ -34,6 +34,8 @@ import Header from "./components/Header";
 Header.tsx
 "use client";
 
+export const runtime = "edge";
+
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
@@ -67,6 +69,8 @@ export default function Header() {
 
 page.tsx
 "use client";
+
+export const runtime = "edge";
 
 import { useUser } from "@clerk/nextjs";
 

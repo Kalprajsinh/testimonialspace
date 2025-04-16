@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
@@ -30,7 +32,7 @@ function Collectionform() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get("http://localhost:3001/api/organization", {
+      const response = await axios.get("https://testimonialspace.onrender.com/api/organization", {
         params: { admin: admin, name: organization }
       });
       setOrganization(response.data);
@@ -52,7 +54,7 @@ function Collectionform() {
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/api/addtextuser", {
+      const response = await axios.post("https://testimonialspace.onrender.com/api/addtextuser", {
         admin,
         name,
         email,

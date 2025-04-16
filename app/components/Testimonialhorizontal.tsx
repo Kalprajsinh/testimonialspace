@@ -26,7 +26,7 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
 
   async function deleteTestimonial() {
     try {
-      const response = await axios.post('http://localhost:3001/api/delete/testimonial', {
+      const response = await axios.post('https://testimonialspace.onrender.com/api/delete/testimonial', {
         admin: testimonial.admin,
         email: testimonial.email,
         organizationName: testimonial.organizationName,
@@ -43,8 +43,8 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
   async function favoriteTestimonial() {
     try {
       const endpoint = fav
-        ? 'http://localhost:3001/api/favorite/remove'
-        : 'http://localhost:3001/api/favorite';
+        ? 'https://testimonialspace.onrender.com/api/favorite/remove'
+        : 'https://testimonialspace.onrender.com/api/favorite';
 
       const response = await axios.post(endpoint, {
         admin: testimonial.admin,

@@ -7,7 +7,6 @@ import {
   SettingsIcon, 
   UsersIcon,
   CopyIcon,
-  Star,
   CheckIcon
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";

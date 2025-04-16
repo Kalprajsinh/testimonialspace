@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { Star } from "lucide-react";

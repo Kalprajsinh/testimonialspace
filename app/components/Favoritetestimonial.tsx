@@ -25,7 +25,7 @@ function Favoritetestimonial() {
   
     useEffect(() => {
       async function alltestimonial(){
-        const respons = await axios.get("http://localhost:3001/api/favorite",{
+        const respons = await axios.get("https://testimonialspace.onrender.com/api/favorite",{
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame), }
         });
         console.log(respons.data);
@@ -102,7 +102,7 @@ function Favoritetestimonialtwo() {
   
     useEffect(() => {
       async function alltestimonial(){
-        const respons = await axios.get("http://localhost:3001/api/favorite",{
+        const respons = await axios.get("https://testimonialspace.onrender.com/api/favorite",{
           params: { admin: user?.fullName,organizationName:params.organame }
         });
         console.log(respons.data);

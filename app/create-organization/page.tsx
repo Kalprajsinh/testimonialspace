@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +41,7 @@ function NewOrganization() {
     setSuccess(null);
 
     try {
-      const responce = await axios.post("http://localhost:3001/api/organization", {
+      const responce = await axios.post("https://testimonialspace.onrender.com/api/organization", {
         admin: user?.fullName,
         name: organame.trim(),
         logo: logo,

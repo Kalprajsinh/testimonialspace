@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { 
   SidebarCloseIcon, 
   SidebarOpenIcon, 
@@ -8,10 +10,7 @@ import {
   SettingsIcon, 
   UserIcon,
   Star, 
-  MessageSquare,
-  Video,
   Plus,
-  Heart
 } from "lucide-react";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
@@ -64,12 +63,12 @@ export default function Dashboard() {
     async function fetchData() {
       try {
         const [organizationsResponse, testimonialsResponse, avgRatingResponse, testimonialTypesResponse, ratingDistributionResponse, last5TestimonialsResponse] = await Promise.all([
-          axios.get("http://localhost:3001/api/admin-organization", { params: { admin: user?.fullName } }),
-          axios.get("http://localhost:3001/api/admin-Testimonials", { params: { admin: user?.fullName } }),
-          axios.get("http://localhost:3001/api/avgrating", { params: { admin: user?.fullName } }),
-          axios.get("http://localhost:3001/api/testimonial-types", { params: { admin: user?.fullName } }),
-          axios.get("http://localhost:3001/api/rating-distribution", { params: { admin: user?.fullName } }),
-          axios.get("http://localhost:3001/api/last5testimonials", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/admin-organization", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/admin-Testimonials", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/avgrating", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/testimonial-types", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/rating-distribution", { params: { admin: user?.fullName } }),
+          axios.get("https://testimonialspace.onrender.com/api/last5testimonials", { params: { admin: user?.fullName } }),
         ]);
   
         setOrganization(organizationsResponse.data);
