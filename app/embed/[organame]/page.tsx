@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Favoritetestimonialtwo } from "@/app/components/Favoritetestimonial";
-import Image from "next/image";
+// import Image from "next/image";
 
 export default function BlogPost() 
 {

@@ -5,7 +5,7 @@ import { SignUpButton } from "@clerk/nextjs";
 
 import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
-import Image from 'next/image';
+// import Image from 'next/image';
 
 export const runtime = "edge";
 
