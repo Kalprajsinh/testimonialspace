@@ -7,7 +7,8 @@ import {
   SettingsIcon, 
   UsersIcon,
   CopyIcon,
-  Star
+  Star,
+  CheckIcon
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
@@ -21,6 +22,9 @@ export default function BlogPost()
   const params = useParams<{ organame: string }>()
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showCheck1, setShowCheck1] = useState(false);
+  const [showCheck2, setShowCheck2] = useState(false);
+  const [showCheck3, setShowCheck3] = useState(false);
 
   const { user } = useUser();
 
@@ -88,11 +92,13 @@ export default function BlogPost()
                   <span>{params.organame}</span>
                 </li>
               </Link>
-   
-                <li onClick={()=> {("settings")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+
+              <Link href={`/settings`}>
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                   <SettingsIcon className="w-5 h-5" />
                   <span>Settings</span>
                 </li>
+              </Link>
               </>
             ) : (
               <>
@@ -107,10 +113,11 @@ export default function BlogPost()
                 <UsersIcon className="w-5 h-5" />
                 </li>
               </Link>
-              
+              <Link href={`/settings`}>
                 <li onClick={()=> {("settings")}} className="flex items-center justify-center py-4 hover:bg-zinc-700 cursor-pointer rounded-lg">
                   <SettingsIcon className="w-5 h-5" />
                 </li>
+                </Link>
               </>
             )}
           </ul>
@@ -136,6 +143,10 @@ export default function BlogPost()
         </pre>
 
           <button onClick={()=>{
+            setShowCheck1(true);
+            setTimeout(() => {
+              setShowCheck1(false);
+            }, 1000);
             navigator.clipboard.writeText(`
               <div id="testimonial" admin="${user?.fullName}" organization="${params.organame}"></div>
               <script src="http://localhost:3000/${selectedLayout}.js"></script>
@@ -144,7 +155,8 @@ export default function BlogPost()
             }} 
             className="hover:text-blue-400 cursor-pointer"
           >
-            <CopyIcon className="w-5 h-5" />
+            <CopyIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck1 ? 'hidden' : 'block'}`} />
+            <CheckIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck1 ? 'block' : 'hidden'}`} />
           </button>
         </div>
       </div>
@@ -214,13 +226,18 @@ export default function BlogPost()
           <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
             <button onClick={()=>{
+              setShowCheck2(true);
+              setTimeout(() => {
+                setShowCheck2(false);
+              }, 1000);
               navigator.clipboard.writeText(`
                 http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
                 `);
               }} 
               className="hover:text-blue-400 cursor-pointer"
             >
-              <CopyIcon className="w-5 h-5" />
+            <CopyIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck2 ? 'hidden' : 'block'}`} />
+            <CheckIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck2 ? 'block' : 'hidden'}`} />
             </button>
           </div>
         </div>
@@ -233,13 +250,18 @@ export default function BlogPost()
             <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
 
             <button onClick={()=>{
+              setShowCheck3(true);
+              setTimeout(() => {
+                setShowCheck3(false);
+              }, 1000);
               navigator.clipboard.writeText(`
                 <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
                 `);
               }} 
               className="hover:text-blue-400 cursor-pointer"
             >
-              <CopyIcon className="w-5 h-5" />
+            <CopyIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck3 ? 'hidden' : 'block'}`} />
+            <CheckIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck3 ? 'block' : 'hidden'}`} />
             </button>
           </div>
         </div>

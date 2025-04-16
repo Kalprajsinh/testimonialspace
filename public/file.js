@@ -1,94 +1,55 @@
 document.addEventListener("DOMContentLoaded", async function () {
-  const testimonialContainer = document.getElementById("testimonial");
-  const admin = testimonialContainer.getAttribute("admin");
-  const organizationName = testimonialContainer.getAttribute("organizationName");
+  const container = document.getElementById("testimonial");
+  const admin = container.getAttribute("admin");
+  const orgName = container.getAttribute("organization");
+  const theme = container.getAttribute("theme");
 
-  // Create the basic structure for the slider and buttons
-  testimonialContainer.innerHTML = `
-    <div class="testimonial-slider relative max-w-4xl mx-auto mt-8">
-      <div id="testimonial-container" class="testimonial-container relative overflow-hidden">
-        <!-- Testimonials will be injected here -->
+  // Determine theme colors
+  const isDark = theme === "dark";
+  const bgColor = isDark ? "bg-black" : "bg-white";
+  const textColor = isDark ? "text-white" : "text-gray-900";
+  const secondaryText = isDark ? "text-gray-300" : "text-gray-600";
+  const cardBg = isDark ? "bg-zinc-900" : "bg-gray-100";
+  const quoteColor = isDark ? "text-gray-200" : "text-gray-800";
+
+  container.innerHTML = `
+    <div class="${bgColor} ${textColor} py-16 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-4">Customer Success Stories</h1>
+        <p class="text-center text-lg mb-12 ${secondaryText}">See how businesses like yours are growing with our platform</p>
+        <div id="testimonials-wrapper" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
       </div>
-      <button id="prev" class="prev-btn absolute top-1/2 left-4 transform -translate-y-1/2 bg-indigo-500 text-white p-3 rounded-full focus:outline-none">
-        Prev
-      </button>
-      <button id="next" class="next-btn absolute top-1/2 right-4 transform -translate-y-1/2 bg-indigo-500 text-white p-3 rounded-full focus:outline-none">
-        Next
-      </button>
     </div>
   `;
 
-  // Fetch testimonials from the API
   try {
-    const response = await fetch(`http://localhost:3001/api/alluser?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(organizationName)}`);
-    const testimonials = await response.json();
+    const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+    const testimonials = await res.json();
+    const wrapper = document.getElementById("testimonials-wrapper");
 
-    if (!testimonials.length) {
-      document.getElementById("testimonial-container").innerHTML = "<p>No testimonials found.</p>";
-      return;
-    }
+    testimonials.forEach(t => {
+      const stars = "★".repeat(t.star) + "☆".repeat(5 - t.star);
 
-    // Populate the slider with testimonials
-    const testimonialItems = testimonials.map((testimonial) => `
-    
-      <div class="testimonial-item bg-white rounded-lg shadow-lg p-6 mb-4">
-        <div class="flex items-center mb-4">
-          <img class="w-12 h-12 rounded-full border-2 border-indigo-500" src="${testimonial.photo}" alt="User Image">
-          <div class="ml-4">
-            <h2 class="text-lg font-semibold text-gray-800">${testimonial.name}</h2>
-            <p class="text-sm text-gray-500">${testimonial.email}</p>
+      const card = document.createElement("div");
+      card.className = `${cardBg} rounded-2xl p-6 shadow-md`;
+      card.innerHTML = `
+        <div class="flex items-center gap-4 mb-4">
+          <img src="${t.photo}" alt="${t.name}" class="w-14 h-14 rounded-full object-cover">
+          <div>
+            <h3 class="text-lg font-semibold">${t.name}</h3>
+            <p class="text-sm ${secondaryText}">${t.email}</p>
           </div>
         </div>
-        <div>
-        <div class="flex items-center">
-          ${`<svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 15l-3.5 2 1-4.5-3.5-3h4.5L10 5l1.5 4.5h4.5l-3.5 3 1 4.5z"/>
-          </svg>`.repeat(testimonial.star)}
-          ${`<svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 15l-3.5 2 1-4.5-3.5-3h4.5L10 5l1.5 4.5h4.5l-3.5 3 1 4.5z"/>
-          </svg>`.repeat(5 - testimonial.star)}
+        <div class="flex gap-1 text-yellow-400 text-lg mb-4">
+          ${stars.split('').map(s => `<span>${s}</span>`).join('')}
         </div>
-        <p class="text-gray-700 text-base mb-4">${testimonial.text}</p>
-        </div>
-        </div>
-        
-    `).join("");
-
-    document.getElementById("testimonial-container").innerHTML = testimonialItems;
-
-    // Initialize slider functionality
-    let currentIndex = 0;
-    const testimonialElements = document.querySelectorAll('.testimonial-item');
-    const totalTestimonials = testimonialElements.length;
-
-    // Function to update the slider view
-    function updateSlider() {
-      testimonialElements.forEach((item, index) => {
-        if (index === currentIndex) {
-          item.classList.remove('hidden');
-        } else {
-          item.classList.add('hidden');
-        }
-      });
-    }
-
-    // Initialize the first view
-    updateSlider();
-
-    // Event listeners for Previous and Next buttons
-    document.getElementById('prev').addEventListener('click', function () {
-      currentIndex = (currentIndex - 1 + totalTestimonials) % totalTestimonials;
-      updateSlider();
-    });
-
-    document.getElementById('next').addEventListener('click', function () {
-      currentIndex = (currentIndex + 1) % totalTestimonials;
-      updateSlider();
+        <p class="${quoteColor} text-base">"${t.text}"</p>
+      `;
+      wrapper.appendChild(card);
     });
 
   } catch (error) {
     console.error("Error fetching testimonials:", error);
-    document.getElementById("testimonial-container").innerHTML = "<p>Failed to load testimonials.</p>";
   }
 });
 

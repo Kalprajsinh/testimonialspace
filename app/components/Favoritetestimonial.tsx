@@ -26,7 +26,7 @@ function Favoritetestimonial() {
     useEffect(() => {
       async function alltestimonial(){
         const respons = await axios.get("http://localhost:3001/api/favorite",{
-          params: { admin: user?.fullName,organizationName:params.organame }
+          params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame), }
         });
         console.log(respons.data);
         setalltestimonial(respons.data);
@@ -47,8 +47,34 @@ function Favoritetestimonial() {
     return (
     <div className="p-8 pt-20 min-h-screen">
       <div className="mt-6 text-white">
-        <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">All Testimonials</h2>
-        <div className="pt-20 text-center text-white">Loading...</div>
+        <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">Favorite Testimonials</h2>
+        <div className="w-full flex items-center justify-center mt-32 bg-zinc-950 text-white">
+    <div className="flex flex-col items-center">
+    <svg width={50} height={50} viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+    <rect x={0} y={0} width="100%" height="100%" fill="#000000" />
+    <g>
+      <linearGradient id="linear-gradient">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="100%" stopColor="#787988" />
+      </linearGradient>
+      <path
+        d="M63.85 0A63.85 63.85 0 1 1 0 63.85 63.85 63.85 0 0 1 63.85 0zm.65 19.5a44 44 0 1 1-44 44 44 44 0 0 1 44-44z"
+        fill="url(#linear-gradient)"
+        fillRule="evenodd"
+      />
+      <animateTransform
+        attributeName="transform"
+        type="rotate"
+        from="0 64 64"
+        to="360 64 64"
+        dur="1080ms"
+        repeatCount="indefinite"
+      />
+    </g>
+  </svg>
+      <p className="text-lg font-medium mt-3">Loading Testimonials...</p>
+    </div>
+  </div>
       </div>
     </div>
   );

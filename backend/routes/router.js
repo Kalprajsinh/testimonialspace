@@ -341,4 +341,30 @@ router.get("/api/orga-rating-distribution", async (req, res) => {
     }
 });
 
+router.delete("/api/delete-organization", async (req, res) => {
+    try {
+      const { admin, organizationId } = req.body;
+  
+      // Find the organization to delete
+      const deletedOrganization = await Organization.findOneAndDelete({
+        _id: organizationId,
+        admin,
+      });
+  
+      if (!deletedOrganization) {
+        return res.status(404).send("Organization not found");
+      }
+  
+      // Delete all testimonials (users) associated with the organization
+      await User.deleteMany({
+        admin,
+        organizationName: deletedOrganization.name,
+      });
+  
+      res.status(200).send("Organization and associated testimonials deleted successfully");
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  });
+
 module.exports = router;

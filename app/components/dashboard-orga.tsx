@@ -6,6 +6,7 @@ import {
   Video,
   Heart,
   CopyIcon,
+  CheckIcon,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
@@ -13,6 +14,10 @@ import axios from "axios";
 import { useParams } from 'next/navigation'
 import Testimonialcard from "./Testimonialcard";
 
+interface Rating {
+  star: number;
+  percentage: number;
+}
 
 const Dashboard = () => {
     const params = useParams<{ organame: string }>()
@@ -24,39 +29,41 @@ const Dashboard = () => {
     textPercentage: 0,
     videoPercentage: 0
   });
-  const [ratingData, setRatingData] = useState([]);
-
+  const [ratingData, setRatingData] = useState<Rating[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCheck1, setShowCheck1] = useState(false);
+  const [showCheck2, setShowCheck2] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
-    async function alltestimonial(){
-      const respons = await axios.get("http://localhost:3001/api/alluser",{
-        params: { admin: user?.fullName,organizationName:params.organame }
+      async function alltestimonial(){
+        const respons = await axios.get("http://localhost:3001/api/alluser",{
+        params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       console.log(respons.data);
       setalltestimonial(respons.data);
     } 
-
+    
     async function getalltestimonial() {
       const respons = await axios.get("http://localhost:3001/api/organization-Testimonials",{
-        params: { admin: user?.fullName,organizationName:params.organame }
+        params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       setTotalTestimonials(respons.data);
     }
     async function getavgrating() {
       const respons = await axios.get("http://localhost:3001/api/organization-avgrating",{
-        params: { admin: user?.fullName,organizationName:params.organame }
+        params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       // console.log(params.organame);
       if (respons.data != null) {
         setavgrating(respons.data.toFixed(2));
       }
     }
-
+    
     async function fetchTestimonialTypes() {
       try {
         const response = await axios.get("http://localhost:3001/api/orga-testimonial-types", {
-          params: { admin: user?.fullName,organizationName:params.organame },
+          params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;
         // console.log(data);
@@ -71,7 +78,7 @@ const Dashboard = () => {
     async function fetchRatingDistribution() {
       try {
         const response = await axios.get("http://localhost:3001/api/orga-rating-distribution", {
-          params: { admin: user?.fullName,organizationName:params.organame },
+          params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;
         // console.log(data);
@@ -80,15 +87,59 @@ const Dashboard = () => {
         console.error("Error fetching rating distribution:", err);
       }
     }
-
-    getalltestimonial();
-    getavgrating();
-    fetchTestimonialTypes();
-    fetchRatingDistribution();
-    alltestimonial();
-
     
+    async function fetchData() {
+      try {
+        setLoading(true); 
+  
+        await Promise.all([
+          alltestimonial(),
+          getalltestimonial(),
+          getavgrating(),
+          fetchTestimonialTypes(),
+          fetchRatingDistribution(),
+        ]);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false); 
+      }
+    }
+  
+    fetchData();
   }, [user?.fullName , params.organame]);
+
+  if (loading) {
+    return (
+      <div className="w-full flex items-center justify-center h-screen bg-zinc-950 text-white">
+      <div className="flex flex-col items-center">
+      <svg width={50} height={50} viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+      <rect x={0} y={0} width="100%" height="100%" fill="#000000" />
+      <g>
+        <linearGradient id="linear-gradient">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#787988" />
+        </linearGradient>
+        <path
+          d="M63.85 0A63.85 63.85 0 1 1 0 63.85 63.85 63.85 0 0 1 63.85 0zm.65 19.5a44 44 0 1 1-44 44 44 44 0 0 1 44-44z"
+          fill="url(#linear-gradient)"
+          fillRule="evenodd"
+        />
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 64 64"
+          to="360 64 64"
+          dur="1080ms"
+          repeatCount="indefinite"
+        />
+      </g>
+    </svg>
+        <p className="text-lg font-medium mt-3">Loading Dashboard...</p>
+      </div>
+    </div>
+      );
+  }
 
     return(
         <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
@@ -114,55 +165,19 @@ const Dashboard = () => {
                     </div>
                     <p className="text-xs text-muted-foreground">Based on {TotalTestimonials} testimonials</p>
             </div>
-            <div>
-        <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
-          <h2 className="mb-4">Testimonial Types</h2>
-          <div>
-  
-            <div>
-              <div className="flex mb-2 items-center justify-between text-sm">
-                <div className="flex items-center">
-                  <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <span>Text</span>
-                </div>
-                <span className="font-medium">{testimonialData.textPercentage}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${testimonialData.textPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-  
-            <div className="mt-2">
-              <div className="flex mb-2 items-center justify-between text-sm">
-                <div className="flex items-center">
-                  <Video className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <span>Video</span>
-                </div>
-                <span className="font-medium">{testimonialData.videoPercentage}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${testimonialData.videoPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-            </div>
-  
-            <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
+            
+         <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col col-span-2">
           <h4 className="mb-4 text-sm font-medium">Rating Distribution</h4>
-          <div className="space-y-2 grid gap-x-4">
-            {ratingData.map((rating) => {
-              const { star, percentage } = rating;
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+            {[1, 2, 3].map((star) => {
+              const rating = ratingData.find((r) => r.star === star);
+              const percentage = rating ? rating.percentage : 0;
+
               return (
                 <div key={star} className="flex items-center gap-2 text-sm">
                   <div className="w-8 text-right flex gap-0.5">
-                    <p>{star} </p>
+                    <p>{star}</p>
                     <p>★</p>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
@@ -171,13 +186,33 @@ const Dashboard = () => {
                       style={{ width: `${percentage}%` }}
                     ></div>
                   </div>
-                  <div className="w-8">{Math.ceil(percentage)}%</div>
+                  <div className="w-8 text-right">{Math.ceil(percentage)}%</div>
+                </div>
+              );
+            })}
+
+            {[4, 5].map((star) => {
+              const rating = ratingData.find((r) => r.star === star);
+              const percentage = rating ? rating.percentage : 0;
+
+              return (
+                <div key={star} className="flex items-center gap-2 text-sm">
+                  <div className="w-8 text-right flex gap-0.5">
+                    <p>{star}</p>
+                    <p>★</p>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
+                  <div className="w-8 text-right">{Math.ceil(percentage)}%</div>
                 </div>
               );
             })}
           </div>
         </div>
-  
          </div>
 
          <div className="mt-6">
@@ -194,13 +229,19 @@ const Dashboard = () => {
       <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
         <button onClick={()=>{
+          setShowCheck1(true);
+          setTimeout(() => {
+            setShowCheck1(false);
+          }, 1000);
           navigator.clipboard.writeText(`
             http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"
         >
-          <CopyIcon className="w-5 h-5" />
+            <CopyIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck1 ? 'hidden' : 'block'}`} />
+            <CheckIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck1 ? 'block' : 'hidden'}`} />
+
         </button>
       </div>
     </div>
@@ -213,13 +254,19 @@ const Dashboard = () => {
         <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
 
         <button onClick={()=>{
+          setShowCheck2(true);
+          setTimeout(() => {
+            setShowCheck2(false);
+          }, 1000);
           navigator.clipboard.writeText(`
             <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"
         >
-          <CopyIcon className="w-5 h-5" />
+            <CopyIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck2 ? 'hidden' : 'block'}`} />
+            <CheckIcon className={`w-5 h-5 transition-opacity duration-200 ${showCheck2 ? 'block' : 'hidden'}`} />
+        
         </button>
       </div>
     </div>

@@ -18,7 +18,6 @@ import Alltestimonial from "@/app/components/Alltestimonial";
 import Texttestimonial from "@/app/components/Texttestimonial";
 import Videotestimonial from "@/app/components/Videotestimonial";
 import Favoritetestimonial from "@/app/components/Favoritetestimonial";
-import Settings from "@/app/components/Settings";
 import { useParams } from 'next/navigation'
 
 
@@ -114,10 +113,12 @@ export default function BlogPost()
                 <span>Embed Code</span>
                 </li>
                 </Link>
-                <li onClick={()=> {setMaincontent("settings")}} className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
+                <Link href={`/settings`}>
+                <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                   <SettingsIcon className="w-5 h-5" />
                   <span>Settings</span>
                 </li>
+                </Link>
               </>
             ) : (
               <>
@@ -164,7 +165,6 @@ export default function BlogPost()
         {Maincontent === "text" && <Texttestimonial />}
         {Maincontent === "video" && <Videotestimonial />}
         {Maincontent === "favorite" && <Favoritetestimonial />}
-        {Maincontent === "settings" && <Settings />}
       </div>
 
     </div>

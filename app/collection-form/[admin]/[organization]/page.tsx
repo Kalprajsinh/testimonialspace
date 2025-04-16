@@ -49,7 +49,8 @@ function Collectionform() {
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3001/api/addtextuser", {
         admin,
@@ -62,12 +63,12 @@ function Collectionform() {
       });
       console.log("Review submitted:", response.data);
       setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
       setName('');
       setEmail('');
       setReviewText('');
       setStarRating(0);
       setPhoto(null);
-      setTimeout(() => setShowSuccess(false), 3000);
 
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -95,7 +96,7 @@ function Collectionform() {
       
         <h2 className=" mt-10 text-xl font-semibold text-gray-800 text-center mb-6">Leave a Review</h2>
 
-
+        <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <input
             type="text"
@@ -103,6 +104,7 @@ function Collectionform() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg"
+            required
           />
           <input
             type="email"
@@ -110,6 +112,7 @@ function Collectionform() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg"
+            required
           />
           
           <div>
@@ -119,6 +122,7 @@ function Collectionform() {
               accept="image/*"
               onChange={(e) => setPhoto(e.target.files?.[0] || null)}
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:rounded-lg file:border-gray-300 file:text-sm file:bg-gray-50 hover:file:bg-gray-100"
+              required
             />
           </div>
 
@@ -144,15 +148,17 @@ function Collectionform() {
             onChange={(e) => setReviewText(e.target.value)}
             rows={4}
             className="w-full p-3 border border-gray-300 rounded-lg"
+            required
           />
 
           <button
-            onClick={handleSubmit}
             className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
+            type="submit"
           >
             Submit Review
           </button>
         </div>
+          </form>
       </div>
     </div>
   );
