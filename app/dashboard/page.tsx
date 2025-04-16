@@ -17,26 +17,47 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import Testimonialcard from "../components/Testimonialcard";
+import Image from 'next/image';
 
 interface Rating {
   star: number;
   percentage: number;
   }
 
+interface Organization {
+  _id: string;
+  admin: string;
+  name: string;
+  logo: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Testimonial {
+  admin: string;
+  name: string;
+  email: string;
+  photo: string;
+  star: number;
+  text: string;
+  favorite: boolean;
+  createdAt: string;
+  updatedAt: string;
+  organizationName: string;
+}
+
 export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [TotalOrganization, setTotalOrganization] = useState(0);
-  const [Organization, setOrganization] = useState([]);
-  const [TotalTestimonials, setTotalTestimonials] = useState(0);
-  const [avgrating, setavgrating] = useState(0);
-  const [testimonialData, setTestimonialData] = useState({
-    textPercentage: 0,
-    videoPercentage: 0
-  });
-  const [last5testimonial, setlast5testimonial] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [TotalOrganization, setTotalOrganization] = useState<number>(0);
+  const [Organization, setOrganization] = useState<Organization[]>([]);
+  const [TotalTestimonials, setTotalTestimonials] = useState<number>(0);
+  const [avgrating, setavgrating] = useState<number>(0);
+  const [last5testimonial, setlast5testimonial] = useState<Testimonial[]>([]);
   const [ratingData, setRatingData] = useState<Rating[]>([]);
   const { user } = useUser();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -62,11 +83,11 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [organizationsResponse, testimonialsResponse, avgRatingResponse, testimonialTypesResponse, ratingDistributionResponse, last5TestimonialsResponse] = await Promise.all([
+        const [organizationsResponse, testimonialsResponse, avgRatingResponse, ratingDistributionResponse, last5TestimonialsResponse] = await Promise.all([
           axios.get("https://testimonialspace.onrender.com/api/admin-organization", { params: { admin: user?.fullName } }),
           axios.get("https://testimonialspace.onrender.com/api/admin-Testimonials", { params: { admin: user?.fullName } }),
           axios.get("https://testimonialspace.onrender.com/api/avgrating", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace.onrender.com/api/testimonial-types", { params: { admin: user?.fullName } }),
+
           axios.get("https://testimonialspace.onrender.com/api/rating-distribution", { params: { admin: user?.fullName } }),
           axios.get("https://testimonialspace.onrender.com/api/last5testimonials", { params: { admin: user?.fullName } }),
         ]);
@@ -79,11 +100,6 @@ export default function Dashboard() {
         if (avgRatingResponse.data != null) {
           setavgrating(avgRatingResponse.data.toFixed(2));
         }
-  
-        setTestimonialData({
-          textPercentage: parseFloat(testimonialTypesResponse.data.textPercentage),
-          videoPercentage: parseFloat(testimonialTypesResponse.data.videoPercentage),
-        });
   
         setRatingData(ratingDistributionResponse.data);
   
@@ -131,7 +147,7 @@ export default function Dashboard() {
                   <span>Dashboard</span>
                 </li>
               </Link>
-                {Organization.map( (orga:any) => (
+                {Organization.map( (orga:Organization) => (
                   <Link key={orga._id} href={`/organization/${orga.name}`}>           
                     <li className="flex items-center space-x-4 p-4 hover:bg-zinc-700 cursor-pointer rounded-lg transition-all duration-200">
                       <UsersIcon className="w-5 h-5" />
@@ -272,16 +288,19 @@ export default function Dashboard() {
        <div className="mt-6 text-white">
         <h2 className="text-xl font-bold">Your Testimonial Spaces</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-        {Organization.map((org:any) => (
+        {Organization.map((org:Organization) => (
               <div key={org._id} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
                 <div className="flex items-center justify-between">
                 <div>
                 <h3 className="text-lg font-semibold">{org.name}</h3>
                 <p className="text-sm text-muted-foreground">{org.title}</p> 
                 </div>
-                <img
+                <Image 
                   src={`data:image/png;base64,${org.logo}`} 
+                  alt="Organization Logo"
                   className="w-10 h-10 rounded-full"
+                  width={5}
+                  height={5}
                 />
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm mt-4">
@@ -324,7 +343,7 @@ export default function Dashboard() {
       </div>
       <h2 className="text-xl mt-6 font-bold">Recent Testimonials</h2>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
-        {last5testimonial.map((testimonial:any, index) => (
+        {last5testimonial.map((testimonial: Testimonial, index) => (
           <div key={`testimonial-${index}`}>
             <Testimonialcard key={`testimonial-card-${index}`} index={index} testimonial={testimonial} />
             <p className="-mt-6 flex justify-end mr-2 text-gray-500 text-xs">{testimonial.organizationName}</p>

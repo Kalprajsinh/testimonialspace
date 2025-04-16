@@ -21,7 +21,7 @@ function Alltestimonial() {
   const [alltestimonial, setAlltestimonial] = useState<Testimonial[]>([]);
   const params = useParams<{ organame: string }>();
   const { user } = useUser();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchAllTestimonials() {
@@ -93,7 +93,7 @@ function Alltestimonial() {
       <div className="mt-6 text-white">
         <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">All Testimonials</h2>
         <div className="mt-6 space-y-6">
-          {alltestimonial.map((testimonial: any, index) => (
+          {alltestimonial.map((testimonial: Testimonial, index) => (
             <Testimonialhorizontal
               key={index}
               index={index}

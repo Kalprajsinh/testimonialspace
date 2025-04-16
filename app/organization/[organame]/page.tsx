@@ -27,8 +27,8 @@ export default function BlogPost()
 
   const params = useParams<{ organame: string }>()
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [Maincontent, setMaincontent] = useState("Dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [Maincontent, setMaincontent] = useState<string>("Dashboard");
 
   const { user } = useUser();
 

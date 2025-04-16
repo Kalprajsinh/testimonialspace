@@ -18,20 +18,29 @@ interface Rating {
   percentage: number;
 }
 
+interface Testimonial {
+  admin: string;
+  name: string;
+  email: string;
+  photo: string;
+  star: number;
+  text: string;
+  favorite: boolean;
+  createdAt: string;
+  updatedAt: string;
+  organizationName: string;
+}
+
 const Dashboard = () => {
     const params = useParams<{ organame: string }>()
 
-  const [alltestimonial, setalltestimonial] = useState([]);
-  const [TotalTestimonials, setTotalTestimonials] = useState(0);
-  const [avgrating, setavgrating] = useState(0);
-  const [testimonialData, setTestimonialData] = useState({
-    textPercentage: 0,
-    videoPercentage: 0
-  });
+  const [alltestimonial, setalltestimonial] = useState<Testimonial[]>([]);
+  const [TotalTestimonials, setTotalTestimonials] = useState<number>(0);
+  const [avgrating, setavgrating] = useState<number>(0);
   const [ratingData, setRatingData] = useState<Rating[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showCheck1, setShowCheck1] = useState(false);
-  const [showCheck2, setShowCheck2] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showCheck1, setShowCheck1] = useState<boolean>(false);
+  const [showCheck2, setShowCheck2] = useState<boolean>(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -59,21 +68,6 @@ const Dashboard = () => {
       }
     }
     
-    async function fetchTestimonialTypes() {
-      try {
-        const response = await axios.get("https://testimonialspace.onrender.com/api/orga-testimonial-types", {
-          params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
-        });
-        const data = response.data;
-        // console.log(data);
-        setTestimonialData({
-          textPercentage: parseFloat(data.textPercentage),
-          videoPercentage: parseFloat(data.videoPercentage),
-        });
-      } catch (err) {
-        console.error("Error fetching testimonial types:", err);
-      }
-    }
     async function fetchRatingDistribution() {
       try {
         const response = await axios.get("https://testimonialspace.onrender.com/api/orga-rating-distribution", {
@@ -95,7 +89,6 @@ const Dashboard = () => {
           alltestimonial(),
           getalltestimonial(),
           getavgrating(),
-          fetchTestimonialTypes(),
           fetchRatingDistribution(),
         ]);
       } catch (err) {
@@ -250,7 +243,7 @@ const Dashboard = () => {
       <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
       <div className="font-mono text-xs flex items-center justify-between">
-        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
+        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
 
         <button onClick={()=>{
           setShowCheck2(true);
@@ -277,7 +270,7 @@ const Dashboard = () => {
          <div className="mt-6 text-white">
           <h2 className="text-xl font-bold">Your Testimonials</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
-              {alltestimonial.map((testimonial:any, index) => (
+              {alltestimonial.map((testimonial: Testimonial, index) => (
                 <Testimonialcard key={index} index={index} testimonial={testimonial} />
               ))}
             </div>

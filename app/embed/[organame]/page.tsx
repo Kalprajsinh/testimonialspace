@@ -14,16 +14,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Favoritetestimonialtwo } from "@/app/components/Favoritetestimonial";
+import Image from "next/image";
 
 export default function BlogPost() 
 {
 
   const params = useParams<{ organame: string }>()
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [showCheck1, setShowCheck1] = useState(false);
-  const [showCheck2, setShowCheck2] = useState(false);
-  const [showCheck3, setShowCheck3] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [showCheck1, setShowCheck1] = useState<boolean>(false);
+  const [showCheck2, setShowCheck2] = useState<boolean>(false);
+  const [showCheck3, setShowCheck3] = useState<boolean>(false);
 
   const { user } = useUser();
 
@@ -48,7 +49,7 @@ export default function BlogPost()
     };
   }, []);
 
-  const [selectedLayout, setSelectedLayout] = useState("carousel");
+  const [selectedLayout, setSelectedLayout] = useState<string>("carousel");
 
 
   return (
@@ -134,11 +135,11 @@ export default function BlogPost()
         <div className="font-mono text-sm flex items-center justify-between w-full">
 
         <pre id="codeBlock" className="overflow-x-auto whitespace-pre-wrap break-words">
-          &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">"testimonial"</span> <span className="text-green-500">admin=</span><span className="text-orange-500">"{user?.fullName}"</span> <span className="text-green-500">organization=</span><span className="text-orange-500">"{params.organame}"</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
+          &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">&quot;testimonial&quot;</span> <span className="text-green-500">admin=</span><span className="text-orange-500">&quot;{user?.fullName}&quot;</span> <span className="text-green-500">organization=</span><span className="text-orange-500">&quot;{params.organame}&quot;</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
           <br />
-          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">"http://localhost:3000/{selectedLayout}.js"</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
+          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;http://localhost:3000/{selectedLayout}.js&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
           <br />
-          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">"https://cdn.tailwindcss.com"</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
+          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;https://cdn.tailwindcss.com&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
         </pre>
 
           <button onClick={()=>{
@@ -203,7 +204,8 @@ export default function BlogPost()
           
         </div>
         <div className="overflow-y-auto max-h-96">
-        <img src="https://freefrontend.com/assets/img/bootstrap-testimonials/bootstrap-4-owl-carousel-for-user-testimonials.png" className="w-full h-full" alt="" />
+        {/* <Image src="https://freefrontend.com/assets/img/bootstrap-testimonials/bootstrap-4-owl-carousel-for-user-testimonials.png" className="w-full h-full" alt="" width={5}
+                  height={5} /> */}
           </div>
         </div>
       </div>
@@ -246,7 +248,7 @@ export default function BlogPost()
           <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
           <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
           <div className="font-mono text-xs flex items-center justify-between">
-            <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src="http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}" width="100%" height="400"&gt;&lt;/iframe&gt;</span>
+            <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
 
             <button onClick={()=>{
               setShowCheck3(true);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Heart, Star } from 'lucide-react';
+import Image from 'next/image';
 
 interface Testimonial {
   admin: string;
@@ -22,7 +23,7 @@ interface TestimonialCardProps {
 }
 
 function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCardProps) {
-  const [fav, setFav] = useState(testimonial.favorite);
+  const [fav, setFav] = useState<boolean>(testimonial.favorite);
 
   async function deleteTestimonial() {
     try {
@@ -67,9 +68,11 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
     >
       <div className="md:flex md:justify-between items-start">
         <div className="flex items-center gap-4">
-          <img
+          <Image
             src={testimonial.photo}
             alt={testimonial.name}
+            width={5}
+            height={5}
             className="w-12 h-12 rounded-full object-cover shadow-md"
           />
           <div>

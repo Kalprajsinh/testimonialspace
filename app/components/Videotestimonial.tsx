@@ -4,8 +4,21 @@ import axios from 'axios';
 import { useUser } from '@clerk/nextjs';
 import Testimonialhorizontal from './Testimonialhorizontal';
 
+interface Testimonial {
+  admin: string;
+  name: string;
+  email: string;
+  photo: string;
+  star: number;
+  text: string;
+  favorite: boolean;
+  createdAt: string;
+  updatedAt: string;
+  organizationName: string;
+}
+
 function Videotestimonial() {
-    const [alltestimonial, setalltestimonial] = useState([]);
+    const [alltestimonial, setalltestimonial] = useState<Testimonial[]>([]);
     const params = useParams<{ organame: string }>()
   
     const { user } = useUser();
@@ -28,7 +41,7 @@ function Videotestimonial() {
       <div className="mt-6 text-white">
         <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">Video Testimonials</h2>
     <div className="mt-6 space-y-6">
-            {alltestimonial.map((testimonial: any, index) => (
+            {alltestimonial.map((testimonial: Testimonial, index) => (
               <Testimonialhorizontal index={index} key={index} testimonial={testimonial} />
             ))}
           </div>

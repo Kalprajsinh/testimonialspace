@@ -11,7 +11,7 @@ export default function Header() {
   const { isSignedIn } = useUser();
   const router = usePathname();
 
-  const scrollToSection = (event:any, id:any) => {
+  const scrollToSection = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     event.preventDefault();
     const section = document.querySelector(id);
     if (section) {

@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       card.className = `${cardBg} rounded-2xl p-6 shadow-md`;
       card.innerHTML = `
         <div class="flex items-center gap-4 mb-4">
-          <img src="${t.photo}" alt="${t.name}" class="w-14 h-14 rounded-full object-cover">
+          <Image src="${t.photo}" alt="${t.name}" class="w-14 h-14 rounded-full object-cover">
           <div>
             <h3 class="text-lg font-semibold">${t.name}</h3>
             <p class="text-sm ${secondaryText}">${t.email}</p>

@@ -5,6 +5,7 @@ import { SignUpButton } from "@clerk/nextjs";
 
 import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
+import Image from 'next/image';
 
 export const runtime = "edge";
 
@@ -256,11 +257,13 @@ export default function HomePage() {
             ].map((testimonial, index) => (
               <div key={index} className="bg-zinc-900 rounded-lg p-8 border border-zinc-800 hover:border-zinc-700 transition-all duration-300">
                 <div className="flex items-center gap-4 mb-6">
-                  <img 
+                  {/* <Image 
                     src={testimonial.image} 
                     alt={testimonial.name}
+                    width={5}
+                  height={5}
                     className="w-16 h-16 rounded-full object-cover"
-                  />
+                  /> */}
                   <div>
                     <h4 className="font-bold">{testimonial.name}</h4>
                     <p className="text-zinc-400 text-sm">{testimonial.role}</p>
@@ -271,7 +274,7 @@ export default function HomePage() {
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-zinc-300 leading-relaxed">"{testimonial.content}"</p>
+                <p className="text-zinc-300 leading-relaxed">&quot;{testimonial.content}&quot;</p>
               </div>
             ))}
           </div>
@@ -430,7 +433,7 @@ export default function HomePage() {
       <div className="bg-black border-2 rounded-2xl border-gray-300 text-white max-w-lg hover:-rotate-6 transform transition duration-500 ease-in-out">
       <div className="flex justify-between p-4">
         <div className="flex items-center gap-4">
-        <img src="https://as1.ftcdn.net/jpg/03/38/30/80/1000_F_338308078_iiXC8b9lxpxmjGKaKu4dtXHSIVfzE8qm.jpg" alt="" width={100} height={100} className=" rounded-full"/>
+        <Image src="https://as1.ftcdn.net/jpg/03/38/30/80/1000_F_338308078_iiXC8b9lxpxmjGKaKu4dtXHSIVfzE8qm.jpg" alt="" width={100} height={100} className=" rounded-full"/>
         <div>
           <h1 className="text-xl font-semibold">Apple Inc</h1>
           <p className="text-sm text-gray-400">Cupertino, California</p>
@@ -438,7 +441,7 @@ export default function HomePage() {
         </div>
         <div className="w-12 h-12 rounded-full mr-5">
           <br />
-        <img src="https://images.freeimages.com/image/large-previews/f35/x-twitter-logo-on-black-circle-5694247.png" alt="" />
+        <Image src="https://images.freeimages.com/image/large-previews/f35/x-twitter-logo-on-black-circle-5694247.png" alt="" />
         </div>
       </div>
         <hr className="text-gray-500" />
@@ -457,7 +460,7 @@ export default function HomePage() {
       <div className="bg-black border-2 rounded-2xl border-gray-300 text-white max-w-lg absolute -z-20 group-hover:-rotate-12 transform transition duration-500 ease-in-out">
       <div className="flex justify-between p-4">
         <div className="flex items-center gap-4">
-        <img src="https://as1.ftcdn.net/jpg/03/38/30/80/1000_F_338308078_iiXC8b9lxpxmjGKaKu4dtXHSIVfzE8qm.jpg" alt="" width={100} height={100} className=" rounded-full"/>
+        <Image src="https://as1.ftcdn.net/jpg/03/38/30/80/1000_F_338308078_iiXC8b9lxpxmjGKaKu4dtXHSIVfzE8qm.jpg" alt="" width={100} height={100} className=" rounded-full"/>
         <div>
           <h1 className="text-xl font-semibold">Apple Inc</h1>
           <p className="text-sm text-gray-400">Cupertino, California</p>
@@ -465,7 +468,7 @@ export default function HomePage() {
         </div>
         <div className="w-12 h-12 rounded-full">
           <br />
-        <img src="https://www.freeiconspng.com/thumbs/apple-logo-icon/blue-apple-logo-icon-0.png" alt="" />
+        <Image src="https://www.freeiconspng.com/thumbs/apple-logo-icon/blue-apple-logo-icon-0.png" alt="" />
         </div>
       </div>
         <hr className="text-gray-500" />
@@ -485,7 +488,7 @@ export default function HomePage() {
       <div className="bg-black border-2 rounded-2xl border-gray-300 text-white max-w-lg absolute -z-10 group-hover:rotate-16 transform transition duration-500 ease-in-out">
       <div className="flex justify-between p-4">
         <div className="flex items-center gap-4">
-        <img src="https://as1.ftcdn.net/jpg/02/65/72/98/1000_F_265729869_mYcOBHGd1ifo9ocwmfDIc4tl5jN7M7sy.jpg" alt="" width={100} height={100} className=" rounded-full"/>
+        <Image src="https://as1.ftcdn.net/jpg/02/65/72/98/1000_F_265729869_mYcOBHGd1ifo9ocwmfDIc4tl5jN7M7sy.jpg" alt="" width={100} height={100} className=" rounded-full"/>
         <div>
           <h1 className="text-xl font-semibold">Apple Inc</h1>
           <p className="text-sm text-gray-400">Cupertino, California</p>
@@ -493,7 +496,7 @@ export default function HomePage() {
         </div>
         <div className="w-12 h-12 rounded-full">
           <br />
-        <img src="https://www.freeiconspng.com/thumbs/apple-logo-icon/blue-apple-logo-icon-0.png" alt="" />
+        <Image src="https://www.freeiconspng.com/thumbs/apple-logo-icon/blue-apple-logo-icon-0.png" alt="" />
         </div>
       </div>
         <hr className="text-gray-500" />

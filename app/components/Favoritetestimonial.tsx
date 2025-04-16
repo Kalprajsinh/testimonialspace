@@ -20,7 +20,7 @@ interface Testimonial {
 function Favoritetestimonial() {
   const [alltestimonial, setalltestimonial] = useState<Testimonial[]>([]);
     const params = useParams<{ organame: string }>()
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const { user } = useUser();
   
     useEffect(() => {
@@ -84,7 +84,7 @@ function Favoritetestimonial() {
       <div className="mt-6 text-white">
         <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">Favorite Testimonials</h2>
     <div className="mt-6 space-y-6">
-            {alltestimonial.map((testimonial: any, index) => (
+            {alltestimonial.map((testimonial: Testimonial, index) => (
               <Testimonialhorizontal index={index} key={index} testimonial={testimonial} onDelete={handleDelete}/>
             ))}
           </div>
@@ -127,7 +127,7 @@ function Favoritetestimonialtwo() {
         <h2 className="text-2xl font-bold">Favorite Testimonials</h2>
         <hr className="text-white mt-2" />
     <div className="mt-6 space-y-6">
-            {alltestimonial.map((testimonial: any, index) => (
+            {alltestimonial.map((testimonial: Testimonial, index) => (
               <Testimonialhorizontal index={index} key={index} testimonial={testimonial} onDelete={handleDelete}/>
             ))}
           </div>

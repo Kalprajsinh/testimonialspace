@@ -17,12 +17,11 @@ function NewOrganization() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -34,27 +33,25 @@ function NewOrganization() {
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
     setSuccess(null);
 
     try {
-      const responce = await axios.post("https://testimonialspace.onrender.com/api/organization", {
+      await axios.post("https://testimonialspace.onrender.com/api/organization", {
         admin: user?.fullName,
         name: organame.trim(),
         logo: logo,
         title: title,
         message: message,
       });
-
       setSuccess("Organization created successfully!");
       setTimeout(() => {
         router.push("/dashboard"); 
       }, 1500);
     } catch (err) {
-      setError("Failed to create organization.");
+      console.error("Error creating organization:", err);
     } finally {
       setLoading(false);
 

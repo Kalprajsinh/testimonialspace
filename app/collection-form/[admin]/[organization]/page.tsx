@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { Star } from "lucide-react";
+import Image from 'next/image';
 
 interface OrganizationData {
   _id: string;
@@ -21,10 +22,10 @@ interface OrganizationData {
 function Collectionform() {
   const params = useParams<{ admin: string; organization: string }>();
   const [Organization, setOrganization] = useState<OrganizationData | null>(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [reviewText, setReviewText] = useState('');
-  const [starRating, setStarRating] = useState(0);
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [reviewText, setReviewText] = useState<string>('');
+  const [starRating, setStarRating] = useState<number>(0);
   const [photo, setPhoto] = useState<File | null>(null);
 
   const admin = decodeURIComponent(params.admin);
@@ -49,9 +50,9 @@ function Collectionform() {
     });
   };
 
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await axios.post("https://testimonialspace.onrender.com/api/addtextuser", {
@@ -85,7 +86,8 @@ function Collectionform() {
     <div className="min-h-screen bg-white pt-24 px-4">
       <div className=" max-w-2xl mx-auto bg-white border border-gray-200 p-6 rounded-xl shadow-md">
       <div className="max-w-xl mx-auto text-center">
-        <img src={logoSrc} alt="Organization Logo" className="mx-auto w-24 h-24 object-cover rounded-full" />
+        <Image src={logoSrc} alt="Organization Logo" width={5}
+                  height={5} className="mx-auto w-24 h-24 object-cover rounded-full" />
         <h1 className="text-3xl font-bold mt-4 text-gray-900">{Organization.title}</h1>
         <p className="text-gray-600 mt-2">{Organization.message}</p>
       </div>

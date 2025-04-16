@@ -1,7 +1,5 @@
 "use client";
 
-export const runtime = "edge";
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
@@ -12,12 +10,25 @@ import {
   HomeIcon, 
   SettingsIcon, 
 } from "lucide-react";
+import Image from "next/image";
+
+interface Organization {
+  _id: string;
+  admin: string;
+  name: string;
+  logo: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 export default function SettingsPage() {
   const { user } = useUser();
-  const [organizations, setOrganizations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -46,7 +57,7 @@ export default function SettingsPage() {
         await axios.delete(`https://testimonialspace.onrender.com/api/delete-organization`, {
           data: { admin: user?.fullName, organizationId: orgId },
         });
-        setOrganizations((prev) => prev.filter((org: any) => org._id !== orgId));
+        setOrganizations((prev) => prev.filter((org: Organization) => org._id !== orgId));
       } catch (err) {
         console.error("Error deleting organization:", err);
         alert("Failed to delete the organization.");
@@ -153,17 +164,19 @@ export default function SettingsPage() {
     <h1 className="text-2xl font-bold mb-6">Settings</h1>
     <h2 className="text-xl font-semibold mb-4">Your Organizations</h2>
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {organizations.map((org: any) => (
+      {organizations.map((org: Organization) => (
         <div key={org._id} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">{org.name}</h3>
               <p className="text-sm text-muted-foreground">{org.title}</p>
             </div>
-            <img
+            <Image
               src={`data:image/png;base64,${org.logo}`}
               className="w-10 h-10 rounded-full"
               alt="Organization Logo"
+              width={5}
+            height={5}
             />
           </div>
           <div className="flex justify-between mt-4">
