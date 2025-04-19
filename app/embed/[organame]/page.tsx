@@ -49,8 +49,31 @@ export default function BlogPost()
     };
   }, []);
 
-  const [selectedLayout, setSelectedLayout] = useState<string>("carousel");
+  const [selectedLayout, setSelectedLayout] = useState<string>("grid");
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  type LayoutType = "grid" | "autoscroll" | "topthree" | "slider";
+  type PreviewImagesType = {
+    [key in LayoutType | `${LayoutType}dark`]: string;
+  };
+
+  const previewImages: PreviewImagesType = {
+    grid: "/images/grid.png",
+    autoscroll: "/images/autoscroll.png",
+    topthree: "/images/topthree.png",
+    slider: "/images/slider.png",
+    griddark: "/images/griddark.png",
+    autoscrolldark: "/images/autoscrolldark.png",
+    topthreedark: "/images/topthreedark.png",
+    sliderdark: "/images/sliderdark.png"
+  };
+
+  const getPreviewImage = (): string => {
+    const layout = selectedLayout as LayoutType;
+    const theme = isDarkMode ? "dark" : "";
+    const key = `${layout}${theme}` as keyof PreviewImagesType;
+    return previewImages[key] || previewImages[layout];
+  };
 
   return (
     <div className="w-full h-full bg-zinc-950 sm:flex">
@@ -135,7 +158,7 @@ export default function BlogPost()
         <div className="font-mono text-sm flex items-center justify-between w-full">
 
         <pre id="codeBlock" className="overflow-x-auto whitespace-pre-wrap break-words">
-          &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">&quot;testimonial&quot;</span> <span className="text-green-500">admin=</span><span className="text-orange-500">&quot;{user?.fullName}&quot;</span> <span className="text-green-500">organization=</span><span className="text-orange-500">&quot;{params.organame}&quot;</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
+          &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">&quot;testimonial&quot;</span> <span className="text-green-500">admin=</span><span className="text-orange-500">&quot;{user?.fullName}&quot;</span> <span className="text-green-500">organization=</span><span className="text-orange-500">&quot;{params.organame}&quot;</span> <span className="text-green-500">theme=</span><span className="text-orange-500">&quot;{isDarkMode ? 'dark' : 'light'}&quot;</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
           <br />
           &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;http://localhost:3000/{selectedLayout}.js&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
           <br />
@@ -148,7 +171,7 @@ export default function BlogPost()
               setShowCheck1(false);
             }, 1000);
             navigator.clipboard.writeText(`
-              <div id="testimonial" admin="${user?.fullName}" organization="${params.organame}"></div>
+              <div id="testimonial" admin="${user?.fullName}" organization="${params.organame}" theme="${isDarkMode ? 'dark' : 'light'}"></div>
               <script src="http://localhost:3000/${selectedLayout}.js"></script>
               <script src="https://cdn.tailwindcss.com"></script>
               `);
@@ -165,48 +188,50 @@ export default function BlogPost()
         <h3 className="mb-3 text-lg font-semibold text-white flex"><p className="w-1/2">Layout Options</p><p className="ml-3 hidden sm:block">Peview</p></h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div onClick={()=>{setSelectedLayout("carousel")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "carousel" ? "bg-zinc-800" : ""}`}>
-            <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
-            <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
-            <div className="h-2 w-full rounded-sm bg-gray-300"></div>
-            <span className="mt-2 text-sm font-semibold text-gray-200">Carousel</span>
-          </div>
-          <div onClick={()=>{setSelectedLayout("list")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "list" ? "bg-zinc-800" : ""} `}>
-            <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
-            <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
-            <div className="h-2 w-full rounded-sm bg-gray-300"></div>
-            <span className="mt-2 text-sm font-semibold text-gray-200">List</span>
-          </div>
-          <div onClick={()=>{setSelectedLayout("grid")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "grid" ? "bg-zinc-800" : ""} `}>
+        <div onClick={()=>{setSelectedLayout("grid")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "grid" ? "bg-zinc-800" : ""}`}>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300"></div>
             <span className="mt-2 text-sm font-semibold text-gray-200">Grid</span>
           </div>
-          <div onClick={()=>{setSelectedLayout("scroll")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "scroll" ? "bg-zinc-800" : ""} `}>
+          <div onClick={()=>{setSelectedLayout("autoscroll")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "autoscroll" ? "bg-zinc-800" : ""}`}>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300"></div>
-            <span className="mt-2 text-sm font-semibold text-gray-200">Scroll</span>
+            <span className="mt-2 text-sm font-semibold text-gray-200">Auto Scroll</span>
           </div>
-          <div onClick={()=>{setSelectedLayout("move")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "move" ? "bg-zinc-800" : ""} `}>
+          <div onClick={()=>{setSelectedLayout("topthree")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "topthree" ? "bg-zinc-800" : ""}`}>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300"></div>
-            <span className="mt-2 text-sm font-semibold text-gray-200">Move</span>
+            <span className="mt-2 text-sm font-semibold text-gray-200">Top Three</span>
           </div>
-          <div onClick={()=>{setSelectedLayout("color")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "color" ? "bg-zinc-800" : ""} `}>
+          <div onClick={()=>{setSelectedLayout("slider")}} className={`flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border p-4 transition-all hover:bg-zinc-800 hover:scale-102 ${selectedLayout === "slider" ? "bg-zinc-800" : ""}`}>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300 mb-1"></div>
             <div className="h-2 w-full rounded-sm bg-gray-300"></div>
-            <span className="mt-2 text-sm font-semibold text-gray-200">Color</span>
+            <span className="mt-2 text-sm font-semibold text-gray-200">Slider</span>
           </div>
-          
+         
+              <label className="inline-flex cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={isDarkMode}
+                  onChange={(e) => setIsDarkMode(e.target.checked)}
+                />
+                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Dark Mode</span>
+              </label>
+
         </div>
         <div className="overflow-y-auto max-h-96">
-        {/* <Image src="https://freefrontend.com/assets/img/bootstrap-testimonials/bootstrap-4-owl-carousel-for-user-testimonials.png" className="w-full h-full" alt="" width={5}
-                  height={5} /> */}
-          </div>
+          <img 
+            src={getPreviewImage()} 
+            alt={`${selectedLayout} preview`} 
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
+        </div>
         </div>
       </div>
   </div>

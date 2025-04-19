@@ -39,7 +39,7 @@ function NewOrganization() {
     setSuccess(null);
 
     try {
-      await axios.post("https://testimonialspace.onrender.com/api/organization", {
+      await axios.post("http://localhost:3001/api/organization", {
         admin: user?.fullName,
         name: organame.trim(),
         logo: logo,
@@ -94,7 +94,7 @@ function NewOrganization() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Upload Your Photo</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Upload logo:</label>
               <input
                 type="file"
                 accept="image/*"

@@ -25,7 +25,7 @@ function Texttestimonial() {
   useEffect(() => {
     async function fetchAllTestimonials() {
       try {
-        const response = await axios.get("https://testimonialspace.onrender.com/api/textuser", {
+        const response = await axios.get("http://localhost:3001/api/textuser", {
           params: {
             admin: user?.fullName,
             organizationName: params.organame,

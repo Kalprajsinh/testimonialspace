@@ -27,7 +27,7 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
 
   async function deleteTestimonial() {
     try {
-      const response = await axios.post('https://testimonialspace.onrender.com/api/delete/testimonial', {
+      const response = await axios.post('http://localhost:3001/api/delete/testimonial', {
         admin: testimonial.admin,
         email: testimonial.email,
         organizationName: testimonial.organizationName,
@@ -44,8 +44,8 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
   async function favoriteTestimonial() {
     try {
       const endpoint = fav
-        ? 'https://testimonialspace.onrender.com/api/favorite/remove'
-        : 'https://testimonialspace.onrender.com/api/favorite';
+        ? 'http://localhost:3001/api/favorite/remove'
+        : 'http://localhost:3001/api/favorite';
 
       const response = await axios.post(endpoint, {
         admin: testimonial.admin,
@@ -75,7 +75,7 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
             height={5}
             className="w-12 h-12 rounded-full object-cover shadow-md"
           />
-          <div>
+          <div className='w-40'>
             <h4 className="font-semibold text-lg">{testimonial.name}</h4>
             <p className="text-gray-400 text-sm">{testimonial.email}</p>
             <div className="flex gap-1 mt-2">
@@ -109,13 +109,12 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
             </button>
           </div>
           <p className="text-gray-300 text-xs mt-5">
-            {new Date(testimonial.createdAt).toLocaleDateString()} •{" "}
-            {new Date(testimonial.createdAt).toLocaleTimeString()}
+            {new Date(testimonial.createdAt).toLocaleDateString([], { month: 'numeric', day: 'numeric' })          } •{" "}
+            {new Date(testimonial.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
       </div>
 
-      {/* Mobile version controls */}
       <div className="flex flex-col items-end sm:hidden">
         <div className="flex justify-end gap-4">
           <button
