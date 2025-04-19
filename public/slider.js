@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     `;
   
     try {
-      const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+      const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
       const allTestimonials = await res.json();
       const testimonialsWrapper = document.getElementById("testimonials-container");
       const scrollLeftBtn = document.getElementById("scroll-left");

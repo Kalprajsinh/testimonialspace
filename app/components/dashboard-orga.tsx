@@ -45,7 +45,7 @@ const Dashboard = () => {
 
   useEffect(() => {
       async function alltestimonial(){
-        const respons = await axios.get("http://localhost:3001/api/alluser",{
+        const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/alluser",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       console.log(respons.data);
@@ -53,13 +53,13 @@ const Dashboard = () => {
     } 
     
     async function getalltestimonial() {
-      const respons = await axios.get("http://localhost:3001/api/organization-Testimonials",{
+      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization-Testimonials",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       setTotalTestimonials(respons.data);
     }
     async function getavgrating() {
-      const respons = await axios.get("http://localhost:3001/api/organization-avgrating",{
+      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization-avgrating",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       // console.log(params.organame);
@@ -70,7 +70,7 @@ const Dashboard = () => {
     
     async function fetchRatingDistribution() {
       try {
-        const response = await axios.get("http://localhost:3001/api/orga-rating-distribution", {
+        const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/orga-rating-distribution", {
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;
@@ -218,7 +218,7 @@ const Dashboard = () => {
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
       <div className="font-mono text-sm flex items-center justify-between">
       
-      <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
+      <span className="text-orange-500">https://testimonialspace.vercel.app/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
         <button onClick={()=>{
           setShowCheck1(true);
@@ -226,7 +226,7 @@ const Dashboard = () => {
             setShowCheck1(false);
           }, 1000);
           navigator.clipboard.writeText(`
-            http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
+            https://testimonialspace.vercel.app/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"
@@ -243,7 +243,7 @@ const Dashboard = () => {
       <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
       <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
       <div className="font-mono text-xs flex items-center justify-between">
-        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
+        <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;https://testimonialspace.vercel.app/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
 
         <button onClick={()=>{
           setShowCheck2(true);
@@ -251,7 +251,7 @@ const Dashboard = () => {
             setShowCheck2(false);
           }, 1000);
           navigator.clipboard.writeText(`
-            <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
+            <iframe src="https://testimonialspace.vercel.app/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
             `);
           }} 
           className="hover:text-blue-400 cursor-pointer"

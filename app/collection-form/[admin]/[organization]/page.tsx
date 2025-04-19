@@ -33,7 +33,7 @@ function Collectionform() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get("http://localhost:3001/api/organization", {
+      const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization", {
         params: { admin: admin, name: organization }
       });
       setOrganization(response.data);
@@ -55,7 +55,7 @@ function Collectionform() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/api/addtextuser", {
+      const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/addtextuser", {
         admin,
         name,
         email,

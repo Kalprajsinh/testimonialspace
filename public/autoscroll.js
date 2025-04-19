@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     `;
   
     try {
-      const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+      const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
       const testimonials = await res.json();
       const wrapper = document.getElementById("testimonials-wrapper");
       const cloneWrapper = document.getElementById("testimonials-clone");
