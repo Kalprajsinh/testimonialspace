@@ -12,11 +12,14 @@
   "dependencies": {
     "@clerk/nextjs": "^6.12.4",
     "@clerk/themes": "^2.2.20",
+    "@stripe/stripe-js": "^7.1.0",
     "axios": "^1.8.3",
     "lucide-react": "^0.479.0",
     "next": "15.2.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
+    "stripe": "^18.0.0"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.6.3",

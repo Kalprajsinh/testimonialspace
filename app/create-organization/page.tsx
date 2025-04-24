@@ -39,7 +39,7 @@ function NewOrganization() {
     setSuccess(null);
 
     try {
-      await axios.post("https://testimonialspace-63bp.vercel.app/api/organization", {
+      await axios.post("http://localhost:3001/api/organization", {
         admin: user?.fullName,
         name: organame.trim(),
         logo: logo,

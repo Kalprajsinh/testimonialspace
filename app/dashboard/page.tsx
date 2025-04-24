@@ -84,12 +84,12 @@ export default function Dashboard() {
     async function fetchData() {
       try {
         const [organizationsResponse, testimonialsResponse, avgRatingResponse, ratingDistributionResponse, last5TestimonialsResponse] = await Promise.all([
-          axios.get("https://testimonialspace-63bp.vercel.app/api/admin-organization", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/admin-Testimonials", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/avgrating", { params: { admin: user?.fullName } }),
+          axios.get("http://localhost:3001/api/admin-organization", { params: { admin: user?.fullName } }),
+          axios.get("http://localhost:3001/api/admin-Testimonials", { params: { admin: user?.fullName } }),
+          axios.get("http://localhost:3001/api/avgrating", { params: { admin: user?.fullName } }),
 
-          axios.get("https://testimonialspace-63bp.vercel.app/api/rating-distribution", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/last5testimonials", { params: { admin: user?.fullName } }),
+          axios.get("http://localhost:3001/api/rating-distribution", { params: { admin: user?.fullName } }),
+          axios.get("http://localhost:3001/api/last5testimonials", { params: { admin: user?.fullName } }),
         ]);
   
         setOrganization(organizationsResponse.data);

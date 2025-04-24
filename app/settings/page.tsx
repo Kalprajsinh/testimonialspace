@@ -37,7 +37,7 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchOrganizations() {
       try {
-        const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/admin-organization", {
+        const response = await axios.get("http://localhost:3001/api/admin-organization", {
           params: { admin: user?.fullName },
         });
         setOrganizations(response.data);
@@ -54,7 +54,7 @@ export default function SettingsPage() {
   const handleDelete = async (orgId: string) => {
     if (confirm("Are you sure you want to delete this organization?")) {
       try {
-        await axios.delete(`https://testimonialspace-63bp.vercel.app/api/delete-organization`, {
+        await axios.delete(`http://localhost:3001/api/delete-organization`, {
           data: { admin: user?.fullName, organizationId: orgId },
         });
         setOrganizations((prev) => prev.filter((org: Organization) => org._id !== orgId));

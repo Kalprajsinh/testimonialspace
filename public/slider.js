@@ -15,9 +15,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   
     container.innerHTML = `
       <div class="${bgColor} ${textColor} py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-7xl mx-auto relative">
+          <div class="absolute z-10 bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="http://localhost:3000">TestimonialSpace</a></div>
           <div class="text-center mb-12">
-            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider ${isDark ? 'text-blue-400 bg-blue-900 bg-opacity-50' : 'text-blue-600 bg-blue-100'} rounded-full uppercase">Testimonials</span>
+            
             <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">What our customers say</h1>
             <p class="mt-3 max-w-2xl mx-auto text-lg ${secondaryText}">Don't just take our word for it - hear from some of our amazing users</p>
           </div>
@@ -33,8 +34,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 </svg>
               </button>
               
-              <div id="testimonial-dots" class="flex items-center space-x-2"></div>
-              
               <button id="scroll-right" class="${buttonBg} w-12 h-12 rounded-full shadow-md flex items-center justify-center border ${borderColor} transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ${textColor}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -47,36 +46,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     `;
   
     try {
-      const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+      const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
       const allTestimonials = await res.json();
       const testimonialsWrapper = document.getElementById("testimonials-container");
       const scrollLeftBtn = document.getElementById("scroll-left");
       const scrollRightBtn = document.getElementById("scroll-right");
-      const dotsContainer = document.getElementById("testimonial-dots");
   
       let currentIndex = 0;
       const itemsPerPage = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-      let totalPages = Math.ceil(allTestimonials.length / itemsPerPage);
       
-      // Create dots for pagination
-      function createDots() {
-        dotsContainer.innerHTML = '';
-        for (let i = 0; i < totalPages; i++) {
-          const dot = document.createElement('button');
-          dot.className = `w-2 h-2 rounded-full transition-all ${i === Math.floor(currentIndex/itemsPerPage) ? (isDark ? 'bg-blue-400 w-4' : 'bg-blue-600 w-4') : (isDark ? 'bg-gray-600' : 'bg-gray-300')}`;
-          dot.addEventListener('click', () => {
-            currentIndex = i * itemsPerPage;
-            renderTestimonials();
-          });
-          dotsContainer.appendChild(dot);
-        }
-      }
-  
       function renderTestimonials() {
         testimonialsWrapper.innerHTML = '';
-        
-        // Update dots
-        createDots();
         
         // Determine which testimonials to show
         const endIndex = Math.min(currentIndex + itemsPerPage, allTestimonials.length);
@@ -84,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         for (let i = currentIndex; i < endIndex; i++) {
           const t = allTestimonials[i];
           const stars = "★".repeat(t.star) + "☆".repeat(5 - t.star);
-  
+
           const card = document.createElement("div");
           card.className = `${cardBg} rounded-xl p-6 shadow-sm border ${borderColor} hover:shadow-md transition-all duration-300 h-full flex flex-col`;
           card.innerHTML = `
@@ -126,7 +106,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const newItemsPerPage = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
         if (newItemsPerPage !== itemsPerPage) {
           itemsPerPage = newItemsPerPage;
-          totalPages = Math.ceil(allTestimonials.length / itemsPerPage);
           currentIndex = Math.min(currentIndex, allTestimonials.length - itemsPerPage);
           renderTestimonials();
         }

@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   container.innerHTML = `
     <section class="${bgColor} ${textColor} py-20 px-6">
-      <div class="max-w-7xl mx-auto text-center">
+      <div class="max-w-7xl mx-auto text-center relative">
+      <div class="absolute -bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="http://localhost:3000">TestimonialSpace</a></div>
         <h2 class="text-4xl font-extrabold tracking-tight mb-4">Customer Success Stories</h2>
         <p class="text-lg ${secondaryText} mb-12">See how businesses like yours are growing with our platform</p>
         <div id="testimonials-wrapper" class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3"></div>
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   `;
 
   try {
-    const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+    const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
     const testimonials = await res.json();
     const wrapper = document.getElementById("testimonials-wrapper");
 
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         <div class="flex gap-1 text-yellow-400 text-base mb-4">
           ${stars.split('').map(s => `<span>${s}</span>`).join('')}
         </div>
-        <blockquote class="${quoteColor} text-base leading-relaxed italic">"${t.text}"</blockquote>
+        <blockquote class="${quoteColor} text-base leading-relaxed">"${t.text}"</blockquote>
       `;
       wrapper.appendChild(card);
     });

@@ -2,16 +2,45 @@
 
 import { useUser } from "@clerk/nextjs";
 import { SignUpButton } from "@clerk/nextjs";
-
+import { loadStripe } from '@stripe/stripe-js';
 import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
 // import Image from 'next/image';
 
 export const runtime = "edge";
 
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+
 export default function HomePage() {
   const { user, isSignedIn } = useUser();
   console.log(user);
+
+  const handleClick1 = async () => {
+    const res = await fetch('/api/standard', {
+      method: 'POST',
+    });
+    const { id } = await res.json();
+    const stripe = await stripePromise;
+    if (!stripe) {
+      console.error("Stripe failed to load");
+      return;
+    }
+    await stripe.redirectToCheckout({ sessionId: id });
+  };
+
+  const handleClick2 = async () => {
+    const res = await fetch('/api/pro', {
+      method: 'POST',
+    });
+    const { id } = await res.json();
+    const stripe = await stripePromise;
+    if (!stripe) {
+      console.error("Stripe failed to load");
+      return;
+    }
+    await stripe.redirectToCheckout({ sessionId: id });
+  };
 
   return (
     <div className="flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black text-white">
@@ -159,84 +188,98 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                name: "Free",
-                price: "$0",
-                description: "Perfect for getting started",
-                features: [
-                  "1 organization",
-                  "50 testimonial",
-                  "Basic analytics",
-                  "Simple embed",
-                  "layout access",
-                  "with watermark"
-                ]
-              },
-              {
-                name: "Standard",
-                price: "$6",
-                description: "Most popular for growing businesses",
-                features: [
-                  "3 organization",
-                  "Unlimited testimonials",
-                  "Custom branding",
-                  "remove watermarks",
-                  "Priority support",
-                  "Custom integrations",
-                ]
-              },
-              {
-                name: "Pro",
-                price: "$12",
-                description: "For large organizations",
-                features: [
-                  "Unlimited organization",
-                  "Unlimited testimonials",
-                  "All Pro features",
-                  "Dedicated support",
-                  "API access",
-                  "Custom integrations",
-                ]
-              }
-            ].map((plan, index) => (
-              <div key={index} className={`rounded-2xl p-8 border ${
-                index === 1 
-                  ? 'bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl' 
-                  : 'bg-zinc-900/50 border-zinc-800'
-              }`}>
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <p className={`${index === 1 ? 'text-blue-400' : 'text-zinc-400'} mb-6`}>
-                  {plan.description}
-                </p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">
-                    {typeof plan.price === 'number' ? '$' : ''}{plan.price}
-                  </span>
-                  {typeof plan.price === 'number' && (
-                    <span className={`${index === 1 ? 'text-blue-400' : 'text-zinc-400'}`}>/mo</span>
-                  )}
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className={`w-5 h-5 ${
-                        index === 1 ? 'text-blue-400' : 'text-white'
-                      }`} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button className={`w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 ${
-                  index === 1
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-white/10 hover:bg-white/20 text-white'
-                }`}>
-                  {index === 2 ? 'Contact Sales' : 'Get Started'}
-                </button>
-              </div>
-            ))}
+
+          <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
+            <h3 className="text-2xl font-bold mb-2">Free</h3>
+            <p className="text-zinc-400 mb-6">Perfect for getting started</p>
+            <div className="mb-6">
+              <span className="text-4xl font-bold">$0</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              {[
+                "1 organization",
+                "50 testimonial",
+                "Basic analytics",
+                "Simple embed",
+                "layout access",
+                "with watermark"
+              ].map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-white" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
+            >
+              Get Started
+            </button>
           </div>
+
+          {/* Standard Plan */}
+          <div className="rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl">
+            <h3 className="text-2xl font-bold mb-2">Standard</h3>
+            <p className="text-blue-400 mb-6">Most popular for growing businesses</p>
+            <div className="mb-6">
+              <span className="text-4xl font-bold">$6</span>
+              <span className="text-blue-400">/mo</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              {[
+                "3 organization",
+                "Unlimited testimonials",
+                "Custom branding",
+                "remove watermarks",
+                "Priority support",
+                "Custom integrations"
+              ].map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-blue-400" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleClick1}
+              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Get Started
+            </button>
+          </div>
+
+          {/* Pro Plan */}
+          <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
+            <h3 className="text-2xl font-bold mb-2">Pro</h3>
+            <p className="text-zinc-400 mb-6">For large organizations</p>
+            <div className="mb-6">
+              <span className="text-4xl font-bold">$12</span>
+              <span className="text-zinc-400">/mo</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              {[
+                "Unlimited organization",
+                "Unlimited testimonials",
+                "All Pro features",
+                "Dedicated support",
+                "API access",
+                "Custom integrations"
+              ].map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-white" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleClick2}
+              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+
         </div>
       </section>
 

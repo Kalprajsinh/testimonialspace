@@ -20,7 +20,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 shadow-md bg-zinc-800 text-white fixed w-full z-10">
+    <header className="flex justify-between items-center p-4 shadow-md bg-zinc-800 text-white fixed w-full z-20">
       <h1 className="text-xl font-bold flex items-center gap-2">
         <Star size={24} className="fill-blue-400 text-blue-600"/>
         <Link href="/">Testimonial Space</Link>
