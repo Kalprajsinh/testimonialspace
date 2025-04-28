@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   
     // Fetch testimonials
     try {
-        const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+        const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
         const testimonials = await res.json();
         const [first, second, third] = testimonials;
 
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         container.innerHTML = `
           <div class="${bgColor} ${textColor} py-20 px-6">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-center relative">
-              <div class="absolute -bottom-10 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="http://localhost:3000">TestimonialSpace</a></div>
+              <div class="absolute -bottom-10 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
               <!-- Column 1: Text Content -->
               <div>
                 <p class="text-sm font-semibold text-violet-600 uppercase mb-2">Testimonial</p>

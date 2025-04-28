@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     container.innerHTML = `
       <div class="${bgColor} ${textColor} py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto relative">
-          <div class="absolute z-10 bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="http://localhost:3000">TestimonialSpace</a></div>
+          <div class="absolute z-10 bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
           <div class="text-center mb-12">
             
             <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">What our customers say</h1>
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     `;
   
     try {
-      const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+      const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
       const allTestimonials = await res.json();
       const testimonialsWrapper = document.getElementById("testimonials-container");
       const scrollLeftBtn = document.getElementById("scroll-left");

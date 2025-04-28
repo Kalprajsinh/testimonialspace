@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     container.innerHTML = `
       <div class="${bgColor} ${textColor} py-16 px-6">
         <div class="max-w-7xl mx-auto relative">
-          <div class="absolute -bottom-3 right-0 text-xs text-gray-400 opacity-50">Powered by <a href="http://localhost:3000">TestimonialSpace</a></div>
+          <div class="absolute -bottom-3 right-0 text-xs text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
           <h1 class="text-4xl font-bold text-center mb-4">Customer Success Stories</h1>
           <p class="text-center text-lg mb-12 ${secondaryText}">See how businesses like yours are growing with our platform</p>
           <div class="relative overflow-hidden">
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     `;
   
     try {
-      const res = await fetch(`http://localhost:3001/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+      const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
       const testimonials = await res.json();
       const wrapper = document.getElementById("testimonials-wrapper");
       const cloneWrapper = document.getElementById("testimonials-clone");

@@ -26,7 +26,7 @@ function Alltestimonial() {
   useEffect(() => {
     async function fetchAllTestimonials() {
       try {
-        const response = await axios.get("http://localhost:3001/api/alluser",{
+        const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/alluser",{
           params: {
             admin: user?.fullName,
             organizationName: decodeURIComponent(params.organame),

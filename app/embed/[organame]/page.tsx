@@ -24,7 +24,7 @@ export default function BlogPost()
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [showCheck1, setShowCheck1] = useState<boolean>(false);
   const [showCheck2, setShowCheck2] = useState<boolean>(false);
-  const [showCheck3, setShowCheck3] = useState<boolean>(false);
+  // const [showCheck3, setShowCheck3] = useState<boolean>(false);
 
   const { user } = useUser();
 
@@ -160,7 +160,7 @@ export default function BlogPost()
         <pre id="codeBlock" className="overflow-x-auto whitespace-pre-wrap break-words">
           &lt;<span className="text-sky-400">div</span> <span className="text-green-500">id=</span><span className="text-orange-500">&quot;testimonial&quot;</span> <span className="text-green-500">admin=</span><span className="text-orange-500">&quot;{user?.fullName}&quot;</span> <span className="text-green-500">organization=</span><span className="text-orange-500">&quot;{params.organame}&quot;</span> <span className="text-green-500">theme=</span><span className="text-orange-500">&quot;{isDarkMode ? 'dark' : 'light'}&quot;</span>&gt;&lt;/<span className="text-sky-400">div</span>&gt;
           <br />
-          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;http://localhost:3000/{selectedLayout}.js&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
+          &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;https://testimonialspace.vercel.app/{selectedLayout}.js&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
           <br />
           &lt;<span className="text-sky-400">script</span> <span className="text-green-500">src=</span><span className="text-orange-500">&quot;https://cdn.tailwindcss.com&quot;</span>&gt;&lt;/<span className="text-sky-400">script</span>&gt;
         </pre>
@@ -172,7 +172,7 @@ export default function BlogPost()
             }, 1000);
             navigator.clipboard.writeText(`
               <div id="testimonial" admin="${user?.fullName}" organization="${params.organame}" theme="${isDarkMode ? 'dark' : 'light'}"></div>
-              <script src="http://localhost:3000/${selectedLayout}.js"></script>
+              <script src="https://testimonialspace.vercel.app/${selectedLayout}.js"></script>
               <script src="https://cdn.tailwindcss.com"></script>
               `);
             }} 
@@ -249,7 +249,7 @@ export default function BlogPost()
           <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
           <div className="font-mono text-sm flex items-center justify-between">
           
-          <span className="text-orange-500">http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
+          <span className="text-orange-500">https://testimonialspace.vercel.app/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}</span> 
 
             <button onClick={()=>{
               setShowCheck2(true);
@@ -257,7 +257,7 @@ export default function BlogPost()
                 setShowCheck2(false);
               }, 1000);
               navigator.clipboard.writeText(`
-                http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
+                https://testimonialspace.vercel.app/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}
                 `);
               }} 
               className="hover:text-blue-400 cursor-pointer"
@@ -273,7 +273,7 @@ export default function BlogPost()
           <h3 className="mb-3 text-lg font-semibold text-white">Embed Form</h3>
           <div className="bg-zinc-800 text-white p-4 rounded-lg shadow-md max-w-2xl">
           <div className="font-mono text-xs flex items-center justify-between">
-            <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;http://localhost:3000/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
+            <span className="text-orange-500 overflow-x-auto mr-20">&lt;iframe src=&quot;https://testimonialspace.vercel.app/collection-form/{user?.fullName ? encodeURIComponent(user?.fullName) : ""}/{params.organame}&quot; width=&quot;100%&quot; height=&quot;400&quot;&gt;&lt;/iframe&gt;</span>
 
             <button onClick={()=>{
               setShowCheck3(true);
@@ -281,7 +281,7 @@ export default function BlogPost()
                 setShowCheck3(false);
               }, 1000);
               navigator.clipboard.writeText(`
-                <iframe src="http://localhost:3000/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
+                <iframe src="https://testimonialspace.vercel.app/collection-form/${user?.fullName ? encodeURIComponent(user?.fullName) : ""}/${params.organame}" width="100%" height="400"></iframe>
                 `);
               }} 
               className="hover:text-blue-400 cursor-pointer"

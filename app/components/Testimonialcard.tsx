@@ -25,7 +25,7 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
 
   async function favoriteTestimonial() {
     if(!fav) {
-    const responce = await axios.post('http://localhost:3001/api/favorite', {
+    const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite', {
       admin:testimonial.admin, 
       email:testimonial.email, 
       organizationName:testimonial.organizationName
@@ -41,7 +41,7 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
     }
   }
   else{
-    const responce = await axios.post('http://localhost:3001/api/favorite/remove', {
+    const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite/remove', {
       admin:testimonial.admin, 
       email:testimonial.email, 
       organizationName:testimonial.organizationName
