@@ -2,11 +2,11 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const { user } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function SuccessPage() {
           // Redirect to dashboard after 3 seconds
           setTimeout(() => {
             window.location.href = "/";
-          }, 4000);
+          }, 3500);
         }
       } catch (error) {
         console.error("Error updating subscription:", error);
@@ -103,6 +103,21 @@ export default function SuccessPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black text-white flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="text-3xl font-bold mb-4">Loading...</h1>
+          <p className="text-gray-400">Please wait while we process your request...</p>
+        </div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
   
