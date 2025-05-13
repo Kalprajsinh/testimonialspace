@@ -17,6 +17,65 @@ const organizationSchema = new mongoose.Schema({
       
 const Organization = mongoose.model("Organization", organizationSchema);
 
+const subscriptionSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
+  fullname: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  plan: {
+    type: String,
+    enum: ['Free', 'standard', 'pro'],
+    default: 'Free'
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  currency: {
+    type: String,
+    default: 'usd'
+  },
+  sessionId: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive', 'cancelled'],
+    default: 'active'
+  },
+  startDate: {
+    type: Date,
+    required: true
+  },
+  endDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdated: {
+    type: Date,
+    default: Date.now
+  },
+  paymentHistory: [{
+    amount: Number,
+    currency: String,
+    date: Date,
+    sessionId: String
+  }]
+});
+
+const Subscription = mongoose.model("Subscription", subscriptionSchema);
+
 const userSchema = new mongoose.Schema({
     admin: { type: String, required: true },
     name: { type: String, required: true },
@@ -34,5 +93,6 @@ const User = mongoose.model("User", userSchema);
 
 module.exports = {
     User,
-    Organization
+    Organization,
+    Subscription
 }

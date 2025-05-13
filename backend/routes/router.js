@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { User, Organization } = require("../database/database");
+const { User, Organization, Subscription } = require("../database/database");
 const { Organizationdata, userdatatext, userdatavideo } = require("../zod/zod");
 
 router.get("/", (req, res) => {
@@ -366,5 +366,134 @@ router.delete("/api/delete-organization", async (req, res) => {
       res.status(500).send(err);
     }
   });
+  
+router.post("/api/check-subscription", async (req, res) => {
+  try {
+    const { fullname, email } = req.body;
+
+    // Check if user already has a subscription
+    console.log("Checking subscription for user:", {
+      fullName: fullname,
+      email: email
+    });
+    const subscription = await Subscription.findOne({ email: email});
+
+    // If no subscription exists, create a new one with free plan
+    if (!subscription) {
+      subscription = await Subscription.create({
+        userId: email, // Using email as userId for free plan
+        fullname,
+        email,
+        plan: 'Free',
+        amount: 0,
+        currency: 'usd',
+        sessionId: 'free_' + Date.now(),
+        status: 'active',
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year for free plan
+        paymentHistory: []
+      });
+    }
+    console.log("Subscription found:", subscription);
+    res.status(200).json(subscription);
+  } catch (err) {
+    console.error("Error checking/creating subscription:", err);
+    res.status(500).send(err);
+  }
+});
+
+router.post("/api/check-session", async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    // Check if this session has been used before
+    const subscription = await Subscription.findOne({ sessionId });
+
+    res.status(200).json({
+      used: !!subscription
+    });
+  } catch (err) {
+    console.error("Error checking session:", err);
+    res.status(500).send(err);
+  }
+});
+
+router.post("/api/update-subscription", async (req, res) => {
+  try {
+    const { 
+      userId, 
+      fullname,
+      email, 
+      plan, 
+      amount, 
+      currency, 
+      sessionId, 
+      status, 
+      startDate, 
+      endDate 
+    } = req.body;
+
+    // Validate required fields
+    if (!email || !plan || !amount || !sessionId || !fullname) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Find existing subscription
+    let subscription = await Subscription.findOne({ email });
+
+    if (subscription) {
+      // Update existing subscription
+      subscription.fullname = fullname;
+      subscription.plan = plan;
+      subscription.amount = amount;
+      subscription.currency = currency;
+      subscription.sessionId = sessionId;
+      subscription.status = status;
+      subscription.startDate = startDate;
+      subscription.endDate = endDate;
+      subscription.lastUpdated = new Date();
+
+      // Add to payment history
+      subscription.paymentHistory.push({
+        amount,
+        currency,
+        date: new Date(),
+        sessionId
+      });
+    } else {
+      // Create new subscription
+      subscription = new Subscription({
+        userId,
+        fullname,
+        email,
+        plan,
+        amount,
+        currency,
+        sessionId,
+        status,
+        startDate,
+        endDate,
+        lastUpdated: new Date(),
+        paymentHistory: [{
+          amount,
+          currency,
+          date: new Date(),
+          sessionId
+        }]
+      });
+    }
+
+    await subscription.save();
+
+    res.status(200).json({
+      message: "Subscription updated successfully",
+      subscription
+    });
+
+  } catch (err) {
+    console.error("Error updating subscription:", err);
+    res.status(500).json({ error: "Failed to update subscription" });
+  }
+});
 
 module.exports = router;

@@ -14,15 +14,15 @@ export async function POST(req) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Your Product Name',
+              name: 'Standard Plan',
             },
-            unit_amount: 600, // $20.00 in cents
+            unit_amount: 600, // $6.00 in cents
           },
           quantity: 1,
         },
       ],
-      success_url: `${req.nextUrl.origin}/success`,
-      cancel_url: `${req.nextUrl.origin}/cancel`,
+      success_url: `${req.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}&plan=standard&amount=6`,
+      cancel_url: `${req.nextUrl.origin}`,
     });
 
     return Response.json({ id: session.id });

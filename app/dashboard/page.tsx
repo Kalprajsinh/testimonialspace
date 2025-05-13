@@ -113,6 +113,30 @@ export default function Dashboard() {
   
     fetchData();
   }, [user?.fullName]);
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (user) {
+        try {
+          console.log("Checking subscription for user:", {
+            fullName: user.fullName,
+            email: user.primaryEmailAddress?.emailAddress
+          });
+
+          const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
+            fullname: user.fullName,
+            email: user.primaryEmailAddress?.emailAddress,
+          });
+          
+          console.log('User subscription:', response.data);
+        } catch (error) {
+          console.error('Error checking subscription:', error);
+        }
+      }
+    };
+
+    checkSubscription();
+  }, [user]);
   
   return (
     <div className="w-full h-screen bg-zinc-950 flex">

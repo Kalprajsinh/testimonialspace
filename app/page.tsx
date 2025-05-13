@@ -5,6 +5,8 @@ import { SignUpButton } from "@clerk/nextjs";
 import { loadStripe } from '@stripe/stripe-js';
 import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
+import axios from 'axios';
 // import Image from 'next/image';
 
 export const runtime = "edge";
@@ -17,30 +19,64 @@ export default function HomePage() {
   console.log(user);
 
   const handleClick1 = async () => {
-    const res = await fetch('/api/standard', {
-      method: 'POST',
-    });
-    const { id } = await res.json();
-    const stripe = await stripePromise;
-    if (!stripe) {
-      console.error("Stripe failed to load");
-      return;
+    try {
+      const res = await fetch('/api/standard', {
+        method: 'POST',
+      });
+      const { id } = await res.json();
+      const stripe = await stripePromise;
+      if (!stripe) {
+        console.error("Stripe failed to load");
+        return;
+      }
+
+      await stripe.redirectToCheckout({ sessionId: id });
+    } catch (error) {
+      console.error('Error initiating standard plan payment:', error);
     }
-    await stripe.redirectToCheckout({ sessionId: id });
   };
 
   const handleClick2 = async () => {
-    const res = await fetch('/api/pro', {
-      method: 'POST',
-    });
-    const { id } = await res.json();
-    const stripe = await stripePromise;
-    if (!stripe) {
-      console.error("Stripe failed to load");
-      return;
+    try {
+      const res = await fetch('/api/pro', {
+        method: 'POST',
+      });
+      const { id } = await res.json();
+      const stripe = await stripePromise;
+      if (!stripe) {
+        console.error("Stripe failed to load");
+        return;
+      }
+
+      await stripe.redirectToCheckout({ sessionId: id });
+    } catch (error) {
+      console.error('Error initiating pro plan payment:', error);
     }
-    await stripe.redirectToCheckout({ sessionId: id });
   };
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (user) {
+        try {
+          console.log("Checking subscription for user:", {
+            fullName: user.fullName,
+            email: user.primaryEmailAddress?.emailAddress
+          });
+
+          const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
+            fullname: user.fullName,
+            email: user.primaryEmailAddress?.emailAddress,
+          });
+          
+          console.log('User subscription:', response.data);
+        } catch (error) {
+          console.error('Error checking subscription:', error);
+        }
+      }
+    };
+
+    checkSubscription();
+  }, [user]);
 
   return (
     <div className="flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black text-white">
@@ -210,11 +246,19 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <button
-              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
-            >
-              Get Started
-            </button>
+            {isSignedIn ? (
+              <Link href="/dashboard">
+                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                  Get Started
+                </button>
+              </Link>
+            ) : (
+              <SignUpButton mode="modal">
+                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                  Sign Up to Get Started
+                </button>
+              </SignUpButton>
+            )}
           </div>
 
           {/* Standard Plan */}
@@ -240,12 +284,20 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={handleClick1}
-              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Get Started
-            </button>
+            {isSignedIn ? (
+              <button
+                onClick={handleClick1}
+                className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Get Started
+              </button>
+            ) : (
+              <SignUpButton mode="modal">
+                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white">
+                  Subscribe
+                </button>
+              </SignUpButton>
+            )}
           </div>
 
           {/* Pro Plan */}
@@ -271,12 +323,20 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={handleClick2}
-              className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
-            >
-              Get Started
-            </button>
+            {isSignedIn ? (
+              <button
+                onClick={handleClick2}
+                className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
+              >
+                Get Started
+              </button>
+            ) : (
+              <SignUpButton mode="modal">
+                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                  Subscribe
+                </button>
+              </SignUpButton>
+            )}
           </div>
         </div>
 
