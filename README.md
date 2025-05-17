@@ -90,11 +90,11 @@ The backend API will run on [http://localhost:3001](http://localhost:3001).
 
 ### Frontend (`.env.local`)
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` – Clerk public key
+- `CLERK_SECRET_KEY` - Clerk secret key
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` – Stripe public key
 
 ### Backend (`.env`)
 - `MONGODB_URI` – MongoDB connection string
-- (Other keys as needed for your deployment)
 
 ---
 
