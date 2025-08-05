@@ -58,6 +58,7 @@ export default function Dashboard() {
   const [ratingData, setRatingData] = useState<Rating[]>([]);
   const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -118,17 +119,11 @@ export default function Dashboard() {
     const checkSubscription = async () => {
       if (user) {
         try {
-          console.log("Checking subscription for user:", {
-            fullName: user.fullName,
-            email: user.primaryEmailAddress?.emailAddress
-          });
-
           const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
             fullname: user.fullName,
             email: user.primaryEmailAddress?.emailAddress,
           });
           
-          console.log('User subscription:', response.data);
         } catch (error) {
           console.error('Error checking subscription:', error);
         }
@@ -236,6 +231,24 @@ export default function Dashboard() {
   </div>
 ):
       <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
+                {error && (
+          <div className="mt-4 p-4 bg-red-900 border border-red-700 rounded-lg text-red-200 mb-4">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span>{error}</span>
+              <button 
+                onClick={() => setError('')} 
+                className="ml-auto text-red-300 hover:text-red-100"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
             <h2 className="">Total Testimonials</h2>
@@ -352,8 +365,25 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-          <div className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800">
-            <Link href={`/create-organization`}>
+            <div
+            className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800"
+            onClick={async () => {
+              try {
+              const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/check-subscription", {
+                fullname: user?.fullName || user?.username,
+                email: user?.primaryEmailAddress?.emailAddress
+              });
+              const isFree = response.data?.plan === 'Free';
+              if (isFree && Organization.length >= 1) {
+                setError('Free plan allows only one organization. Upgrade to add more.');
+                return;
+              }
+              window.location.href = '/create-organization';
+                             } catch (error) {
+               setError('Unable to check subscription. Please try again.');
+               }
+            }}
+            >
             <div className="rounded-full bg-zinc-900 p-3 place-self-center">
               <Plus className="h-6 w-6 text-muted-foreground" />
             </div>
@@ -361,8 +391,7 @@ export default function Dashboard() {
             <p className="mt-1 text-center text-sm text-muted-foreground">
               Add a new testimonial collection for another product or service
             </p>
-          </Link>
-          </div>
+            </div>
         </div>
       </div>
       <h2 className="text-xl mt-6 font-bold">Recent Testimonials</h2>

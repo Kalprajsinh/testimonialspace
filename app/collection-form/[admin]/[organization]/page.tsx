@@ -64,7 +64,6 @@ function Collectionform() {
         star: starRating,
         organizationName: Organization?.name,
       });
-      console.log("Review submitted:", response.data);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
       setName('');

@@ -16,7 +16,6 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 export default function HomePage() {
   const { user, isSignedIn } = useUser();
-  console.log(user);
 
   const handleClick1 = async () => {
     try {
@@ -26,7 +25,6 @@ export default function HomePage() {
       const { id } = await res.json();
       const stripe = await stripePromise;
       if (!stripe) {
-        console.error("Stripe failed to load");
         return;
       }
 
@@ -44,7 +42,6 @@ export default function HomePage() {
       const { id } = await res.json();
       const stripe = await stripePromise;
       if (!stripe) {
-        console.error("Stripe failed to load");
         return;
       }
 
@@ -58,17 +55,11 @@ export default function HomePage() {
     const checkSubscription = async () => {
       if (user) {
         try {
-          console.log("Checking subscription for user:", {
-            fullName: user.fullName,
-            email: user.primaryEmailAddress?.emailAddress
-          });
-
           const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
             fullname: user.fullName,
             email: user.primaryEmailAddress?.emailAddress,
           });
           
-          console.log('User subscription:', response.data);
         } catch (error) {
           console.error('Error checking subscription:', error);
         }
@@ -80,7 +71,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black text-white">
-      {/* Hero Section */}
       <section className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-black/50" />
         <div className="relative z-10 flex flex-col items-center justify-center text-center p-8 max-w-6xl mx-auto">
@@ -114,7 +104,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section id="features" className="py-20">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
@@ -169,7 +158,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section id="how-it-works" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -214,7 +202,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
       <section id="pricing" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -261,7 +248,6 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Standard Plan */}
           <div className="rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl">
             <h3 className="text-2xl font-bold mb-2">Standard</h3>
             <p className="text-blue-400 mb-6">Most popular for growing businesses</p>
@@ -300,7 +286,6 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Pro Plan */}
           <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
             <p className="text-zinc-400 mb-6">For large organizations</p>
@@ -343,7 +328,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section id="testimonials" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -378,18 +362,6 @@ export default function HomePage() {
             ].map((testimonial, index) => (
               <div key={index} className="group bg-zinc-900/50 rounded-2xl p-8 border border-zinc-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10">
                 <div className="flex items-center gap-4 mb-6">
-                  {/* <div className="relative">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden">
-                      <img 
-                        src={testimonial.image} 
-                        alt={testimonial.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="absolute -bottom-2 -right-2 bg-blue-500/20 p-2 rounded-lg">
-                      <Star className="w-4 h-4 text-blue-400" />
-                    </div>
-                  </div> */}
                   <div>
                     <h4 className="font-bold group-hover:text-blue-400 transition-colors duration-300">{testimonial.name}</h4>
                     <p className="text-zinc-400 text-sm">{testimonial.role}</p>
@@ -407,7 +379,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-zinc-800 py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
@@ -464,7 +435,7 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 hidden">
               <h4 className="font-semibold text-white">Company</h4>
               <ul className="space-y-2">
                 <li>
@@ -489,7 +460,7 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 hidden">
               <h4 className="font-semibold text-white">Legal</h4>
               <ul className="space-y-2">
                 <li>
@@ -512,7 +483,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-zinc-400">
-              &copy; {new Date().getFullYear()} TestimonialSpace. All rights reserved.
+              &copy; {new Date().getFullYear()} TestimonialSpace.
             </p>
             <div className="flex items-center gap-4 mt-4 md:mt-0">
               <Link href="#" className="text-zinc-400 hover:text-blue-400 transition-colors duration-300">

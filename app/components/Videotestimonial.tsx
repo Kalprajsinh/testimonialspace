@@ -28,7 +28,6 @@ function Videotestimonial() {
         const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/videouser",{
           params: { admin: user?.fullName,organizationName:params.organame }
         });
-        console.log(respons.data);
         setalltestimonial(respons.data);
       }
   

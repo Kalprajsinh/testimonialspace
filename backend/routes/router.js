@@ -371,17 +371,11 @@ router.post("/api/check-subscription", async (req, res) => {
   try {
     const { fullname, email } = req.body;
 
-    // Check if user already has a subscription
-    console.log("Checking subscription for user:", {
-      fullName: fullname,
-      email: email
-    });
     const subscription = await Subscription.findOne({ email: email});
 
-    // If no subscription exists, create a new one with free plan
     if (!subscription) {
       subscription = await Subscription.create({
-        userId: email, // Using email as userId for free plan
+        userId: email, 
         fullname,
         email,
         plan: 'Free',
@@ -394,7 +388,6 @@ router.post("/api/check-subscription", async (req, res) => {
         paymentHistory: []
       });
     }
-    console.log("Subscription found:", subscription);
     res.status(200).json(subscription);
   } catch (err) {
     console.error("Error checking/creating subscription:", err);
@@ -405,8 +398,6 @@ router.post("/api/check-subscription", async (req, res) => {
 router.post("/api/check-session", async (req, res) => {
   try {
     const { sessionId } = req.body;
-
-    // Check if this session has been used before
     const subscription = await Subscription.findOne({ sessionId });
 
     res.status(200).json({
@@ -433,16 +424,13 @@ router.post("/api/update-subscription", async (req, res) => {
       endDate 
     } = req.body;
 
-    // Validate required fields
     if (!email || !plan || !amount || !sessionId || !fullname) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Find existing subscription
     let subscription = await Subscription.findOne({ email });
 
     if (subscription) {
-      // Update existing subscription
       subscription.fullname = fullname;
       subscription.plan = plan;
       subscription.amount = amount;
@@ -453,7 +441,6 @@ router.post("/api/update-subscription", async (req, res) => {
       subscription.endDate = endDate;
       subscription.lastUpdated = new Date();
 
-      // Add to payment history
       subscription.paymentHistory.push({
         amount,
         currency,
@@ -461,7 +448,6 @@ router.post("/api/update-subscription", async (req, res) => {
         sessionId
       });
     } else {
-      // Create new subscription
       subscription = new Subscription({
         userId,
         fullname,

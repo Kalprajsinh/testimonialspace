@@ -28,7 +28,6 @@ function Favoritetestimonial() {
         const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/favorite",{
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame), }
         });
-        console.log(respons.data);
         setalltestimonial(respons.data);
         setLoading(false);
       }
@@ -105,7 +104,6 @@ function Favoritetestimonialtwo() {
         const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/favorite",{
           params: { admin: user?.fullName,organizationName:params.organame }
         });
-        console.log(respons.data);
         setalltestimonial(respons.data);
       }
   

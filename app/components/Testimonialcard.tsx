@@ -32,12 +32,9 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
     });
 
     const data = responce.data;
-    console.log(data);
     
     if (responce.data) {
       setfav(true);
-    } else {
-      console.log("error in favoriting testimonial");
     }
   }
   else{
@@ -48,13 +45,10 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
     });
 
     const data = responce.data;
-    console.log(data);
     
     if (responce.data) {
       setfav(false);
-    } else {
-      console.log("error in unfavoriting testimonial");
-  }
+    }
   }
 }
 

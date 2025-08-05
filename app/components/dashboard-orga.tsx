@@ -48,7 +48,6 @@ const Dashboard = () => {
         const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/alluser",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
-      console.log(respons.data);
       setalltestimonial(respons.data);
     } 
     
@@ -62,7 +61,6 @@ const Dashboard = () => {
       const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization-avgrating",{
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
-      // console.log(params.organame);
       if (respons.data != null) {
         setavgrating(respons.data.toFixed(2));
       }
@@ -74,7 +72,6 @@ const Dashboard = () => {
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;
-        // console.log(data);
         setRatingData(data);
       } catch (err) {
         console.error("Error fetching rating distribution:", err);

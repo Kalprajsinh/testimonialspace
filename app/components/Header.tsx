@@ -68,7 +68,7 @@ export default function Header() {
 
   return (
     <header className="flex justify-between items-center p-4 shadow-md bg-zinc-800 text-white fixed w-full z-20">
-      <h1 className="text-xl font-bold flex items-center gap-2">
+      <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
         <Star size={24} className="fill-blue-400 text-blue-600"/>
         <Link href="/">Testimonial Space</Link>
       </h1>
@@ -83,11 +83,17 @@ export default function Header() {
       <nav>
         {isSignedIn ? (
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium px-3 py-1 rounded-full bg-blue-500/20 text-blue-400">
-              {plan.charAt(0).toUpperCase() + plan.slice(1).toLowerCase()} Plan
-            </span>
-            <UserButton showName/>
+          <span className="text-xs sm:text-sm font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-blue-500/20 text-blue-400">
+            {plan.charAt(0).toUpperCase() + plan.slice(1).toLowerCase()} Plan
+          </span>
+          <div className="hidden sm:block">
+            <UserButton showName />
           </div>
+          <div className="block sm:hidden">
+            <UserButton showName={false} />
+          </div>
+        </div>
+
         ) : (
           <div className="flex gap-4">
             <SignInButton mode="modal">

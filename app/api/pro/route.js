@@ -27,7 +27,6 @@ export async function POST(req) {
 
     return Response.json({ id: session.id });
   } catch (err) {
-    console.error(err);
     return new Response(
       JSON.stringify({ error: err.message }),
       { status: 500 }
