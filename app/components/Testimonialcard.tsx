@@ -30,9 +30,6 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
       email:testimonial.email, 
       organizationName:testimonial.organizationName
     });
-
-    const data = responce.data;
-    
     if (responce.data) {
       setfav(true);
     }
@@ -43,9 +40,6 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
       email:testimonial.email, 
       organizationName:testimonial.organizationName
     });
-
-    const data = responce.data;
-    
     if (responce.data) {
       setfav(false);
     }

@@ -119,7 +119,7 @@ export default function Dashboard() {
     const checkSubscription = async () => {
       if (user) {
         try {
-          const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
+          await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
             fullname: user.fullName,
             email: user.primaryEmailAddress?.emailAddress,
           });
@@ -380,6 +380,7 @@ export default function Dashboard() {
               }
               window.location.href = '/create-organization';
                              } catch (error) {
+                console.error("Error checking subscription:", error);
                setError('Unable to check subscription. Please try again.');
                }
             }}

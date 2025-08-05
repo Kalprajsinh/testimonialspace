@@ -54,6 +54,7 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
+    console.error('Error verifying session:', error);
     return new Response(
       JSON.stringify({ isValid: false, error: 'Invalid session' }),
       { status: 200 }

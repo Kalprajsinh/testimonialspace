@@ -55,7 +55,7 @@ function Collectionform() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/addtextuser", {
+      await axios.post("https://testimonialspace-63bp.vercel.app/api/addtextuser", {
         admin,
         name,
         email,
