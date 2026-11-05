@@ -11,6 +11,7 @@ import {
   UserIcon,
   Star,
   Plus,
+  Zap,
 } from "lucide-react";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
@@ -18,6 +19,7 @@ import { useEffect, useState } from "react";
 import Link from 'next/link';
 import Testimonialcard from "../components/Testimonialcard";
 import Image from 'next/image';
+import { BACKEND_URL } from "@/lib/config";
 
 interface Rating {
   star: number;
@@ -56,6 +58,7 @@ export default function Dashboard() {
   const [avgrating, setavgrating] = useState<number>(0);
   const [last5testimonial, setlast5testimonial] = useState<Testimonial[]>([]);
   const [ratingData, setRatingData] = useState<Rating[]>([]);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<string>("Free");
   const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -83,14 +86,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!user) return;
       try {
         const [organizationsResponse, testimonialsResponse, avgRatingResponse, ratingDistributionResponse, last5TestimonialsResponse] = await Promise.all([
-          axios.get("https://testimonialspace-63bp.vercel.app/api/admin-organization", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/admin-Testimonials", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/avgrating", { params: { admin: user?.fullName } }),
-
-          axios.get("https://testimonialspace-63bp.vercel.app/api/rating-distribution", { params: { admin: user?.fullName } }),
-          axios.get("https://testimonialspace-63bp.vercel.app/api/last5testimonials", { params: { admin: user?.fullName } }),
+          axios.get(`${BACKEND_URL}/api/admin-organization`, { params: { admin: user?.fullName } }),
+          axios.get(`${BACKEND_URL}/api/admin-Testimonials`, { params: { admin: user?.fullName } }),
+          axios.get(`${BACKEND_URL}/api/avgrating`, { params: { admin: user?.fullName } }),
+          axios.get(`${BACKEND_URL}/api/rating-distribution`, { params: { admin: user?.fullName } }),
+          axios.get(`${BACKEND_URL}/api/last5testimonials`, { params: { admin: user?.fullName } }),
         ]);
 
         setOrganization(organizationsResponse.data);
@@ -103,7 +106,6 @@ export default function Dashboard() {
         }
 
         setRatingData(ratingDistributionResponse.data);
-
         setlast5testimonial(last5TestimonialsResponse.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -113,17 +115,21 @@ export default function Dashboard() {
     }
 
     fetchData();
-  }, [user?.fullName]);
+  }, [user?.fullName, user]);
 
   useEffect(() => {
     const checkSubscription = async () => {
-      if (user) {
+      if (user?.primaryEmailAddress?.emailAddress) {
         try {
-          await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
-            fullname: user.fullName,
-            email: user.primaryEmailAddress?.emailAddress,
+          const safeFullname = user.fullName || user.username || user.primaryEmailAddress.emailAddress.split('@')[0] || "User";
+          const res = await axios.post(`${BACKEND_URL}/api/check-subscription`, {
+            userId: user.id,
+            fullname: safeFullname,
+            email: user.primaryEmailAddress.emailAddress,
           });
-
+          if (res.data?.plan) {
+            setSubscriptionPlan(res.data.plan);
+          }
         } catch (error) {
           console.error('Error checking subscription:', error);
         }
@@ -231,15 +237,22 @@ export default function Dashboard() {
       ) :
         <div className="flex-1 p-8 bg-zinc-950 text-white pt-20 overflow-y-auto">
           {error && (
-            <div className="mt-4 p-4 bg-red-900 border border-red-700 rounded-lg text-red-200 mb-4">
+            <div className="mt-4 p-4 bg-red-900/60 border border-red-700 rounded-lg text-red-200 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 mr-2 text-red-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
                 <span>{error}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link href="/#pricing">
+                  <button className="px-3 py-1 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-md transition cursor-pointer">
+                    Upgrade Now
+                  </button>
+                </Link>
                 <button
                   onClick={() => setError('')}
-                  className="ml-auto text-red-300 hover:text-red-100"
+                  className="text-red-300 hover:text-red-100 p-1"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -248,6 +261,43 @@ export default function Dashboard() {
               </div>
             </div>
           )}
+
+          {/* Subscription Limits & Plan Status Bar */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                subscriptionPlan.toLowerCase() === 'pro'
+                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                  : subscriptionPlan.toLowerCase() === 'standard'
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                    : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+              }`}>
+                {subscriptionPlan} Plan
+              </span>
+              <span className="text-sm text-zinc-300">
+                Organizations: <strong className="text-white">{Organization.length}</strong> / {
+                  subscriptionPlan.toLowerCase() === 'free' ? '1' : subscriptionPlan.toLowerCase() === 'standard' ? '3' : '∞'
+                }
+              </span>
+              <span className="text-zinc-600 hidden sm:inline">|</span>
+              <span className="text-sm text-zinc-300 hidden sm:inline">
+                Testimonials: <strong className="text-white">{TotalTestimonials}</strong> / {
+                  subscriptionPlan.toLowerCase() === 'free' ? '50' : 'Unlimited'
+                }
+              </span>
+              <span className="text-zinc-600 hidden md:inline">|</span>
+              <span className="text-xs text-zinc-400 hidden md:inline">
+                {subscriptionPlan.toLowerCase() === 'free' ? 'Watermark: On' : 'Watermark: Removed'}
+              </span>
+            </div>
+            {subscriptionPlan.toLowerCase() !== 'pro' && (
+              <Link href="/#pricing">
+                <button className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow transition cursor-pointer">
+                  <Zap className="w-3.5 h-3.5" /> Upgrade Plan
+                </button>
+              </Link>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-zinc-900 flex justify-center p-4 rounded-lg shadow-lg flex-col">
               <h2 className="">Total Testimonials</h2>
@@ -368,13 +418,19 @@ export default function Dashboard() {
                 className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800"
                 onClick={async () => {
                   try {
-                    const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/check-subscription", {
-                      fullname: user?.fullName || user?.username,
+                    const safeFullname = user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "User";
+                    const response = await axios.post(`${BACKEND_URL}/api/check-subscription`, {
+                      userId: user?.id,
+                      fullname: safeFullname,
                       email: user?.primaryEmailAddress?.emailAddress
                     });
-                    const isFree = response.data?.plan === 'Free';
-                    if (isFree && Organization.length >= 1) {
-                      setError('Free plan allows only one organization. Upgrade to add more.');
+                    const plan = (response.data?.plan || 'Free').toLowerCase();
+                    if (plan === 'free' && Organization.length >= 1) {
+                      setError('Free plan allows only 1 organization. Please upgrade to Standard (3 orgs) or Pro (unlimited) to add more.');
+                      return;
+                    }
+                    if (plan === 'standard' && Organization.length >= 3) {
+                      setError('Standard plan allows up to 3 organizations. Please upgrade to Pro for unlimited organizations.');
                       return;
                     }
                     window.location.href = '/create-organization';

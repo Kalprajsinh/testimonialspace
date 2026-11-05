@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from 'next/navigation'
 import Testimonialcard from "./Testimonialcard";
+import { BACKEND_URL } from "@/lib/config";
 
 interface Rating {
   star: number;
@@ -45,20 +46,20 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function alltestimonial() {
-      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/alluser", {
+      const respons = await axios.get(`${BACKEND_URL}/api/alluser`, {
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       setalltestimonial(respons.data);
     }
 
     async function getalltestimonial() {
-      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization-Testimonials", {
+      const respons = await axios.get(`${BACKEND_URL}/api/organization-Testimonials`, {
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       setTotalTestimonials(respons.data);
     }
     async function getavgrating() {
-      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization-avgrating", {
+      const respons = await axios.get(`${BACKEND_URL}/api/organization-avgrating`, {
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) }
       });
       if (respons.data != null) {
@@ -68,7 +69,7 @@ const Dashboard = () => {
 
     async function fetchRatingDistribution() {
       try {
-        const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/orga-rating-distribution", {
+        const response = await axios.get(`${BACKEND_URL}/api/orga-rating-distribution`, {
           params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame) },
         });
         const data = response.data;

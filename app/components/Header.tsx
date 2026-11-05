@@ -8,6 +8,7 @@ import { Star } from "lucide-react";
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { BACKEND_URL } from "@/lib/config";
 
 export default function Header() {
   const { isSignedIn, user } = useUser();
@@ -15,14 +16,17 @@ export default function Header() {
   const [plan, setPlan] = useState<string>("Free");
 
   useEffect(() => {
+    let isMounted = true;
     const fetchSubscription = async () => {
       if (user?.primaryEmailAddress?.emailAddress) {
         try {
-          const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/check-subscription", {
-            fullname: user.fullName || user.username,
+          const safeFullname = user.fullName || user.username || user.primaryEmailAddress.emailAddress.split('@')[0] || "User";
+          const response = await axios.post(`${BACKEND_URL}/api/check-subscription`, {
+            userId: user.id,
+            fullname: safeFullname,
             email: user.primaryEmailAddress.emailAddress
           });
-          if (response.data?.plan) {
+          if (isMounted && response.data?.plan) {
             setPlan(response.data.plan);
           }
         } catch (error) {
@@ -34,29 +38,11 @@ export default function Header() {
     if (isSignedIn) {
       fetchSubscription();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [isSignedIn, user]);
-
-  useEffect(() => {
-    const fetchSubscription = async () => {
-      if (user?.primaryEmailAddress?.emailAddress) {
-        try {
-          const response = await axios.post("https://testimonialspace-63bp.vercel.app/api/check-subscription", {
-            fullname: user.fullName || user.username,
-            email: user.primaryEmailAddress.emailAddress
-          });
-          if (response.data?.plan) {
-            setPlan(response.data.plan);
-          }
-        } catch (error) {
-          console.error("Error fetching subscription:", error);
-        }
-      }
-    };
-
-    if (isSignedIn) {
-      fetchSubscription();
-    }
-  }, []);
 
   const scrollToSection = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     event.preventDefault();
@@ -65,6 +51,8 @@ export default function Header() {
       section.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const formattedPlan = plan.charAt(0).toUpperCase() + plan.slice(1).toLowerCase();
 
   return (
     <header className="flex justify-between items-center p-4 shadow-md bg-zinc-800 text-white fixed w-full z-20">
@@ -82,10 +70,21 @@ export default function Header() {
       )}
       <nav>
         {isSignedIn ? (
-          <div className="flex items-center gap-4">
-            <span className="text-xs sm:text-sm font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-blue-500/20 text-blue-400">
-              {plan.charAt(0).toUpperCase() + plan.slice(1).toLowerCase()} Plan
-            </span>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link href="/settings" title="View Plan & Subscription">
+              <span className={`text-xs sm:text-sm font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full cursor-pointer transition ${
+                plan.toLowerCase() === 'pro' 
+                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' 
+                  : plan.toLowerCase() === 'standard' 
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
+                    : 'bg-zinc-700 text-zinc-300'
+              }`}>
+                {formattedPlan} Plan
+              </span>
+            </Link>
+            <Link href="/dashboard" className="hidden sm:block text-sm text-zinc-300 hover:text-white">
+              Dashboard
+            </Link>
             <div className="hidden sm:block">
               <UserButton showName />
             </div>
@@ -93,14 +92,13 @@ export default function Header() {
               <UserButton showName={false} />
             </div>
           </div>
-
         ) : (
           <div className="flex gap-4">
             <SignInButton mode="modal">
               <button className="rounded font-bold cursor-pointer">Sign In</button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <button className="rounded font-bold cursor-pointer">Sign Up</button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold cursor-pointer">Sign Up</button>
             </SignUpButton>
           </div>
         )}

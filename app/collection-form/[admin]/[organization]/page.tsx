@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { Star } from "lucide-react";
 import Image from 'next/image';
+import { BACKEND_URL } from "@/lib/config";
 
 interface OrganizationData {
   _id: string;
@@ -33,7 +34,7 @@ function Collectionform() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/organization", {
+      const response = await axios.get(`${BACKEND_URL}/api/organization`, {
         params: { admin: admin, name: organization }
       });
       setOrganization(response.data);
@@ -51,11 +52,13 @@ function Collectionform() {
   };
 
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage(null);
     try {
-      await axios.post("https://testimonialspace-63bp.vercel.app/api/addtextuser", {
+      await axios.post(`${BACKEND_URL}/api/addtextuser`, {
         admin,
         name,
         email,
@@ -72,8 +75,15 @@ function Collectionform() {
       setStarRating(0);
       setPhoto(null);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error submitting review:", error);
+      let msg = "Failed to submit review.";
+      if (axios.isAxiosError(error) && error.response?.data) {
+        msg = error.response.data.error || (typeof error.response.data === 'string' ? error.response.data : msg);
+      } else if (error instanceof Error) {
+        msg = error.message;
+      }
+      setErrorMessage(msg);
     }
   };
 
@@ -94,6 +104,12 @@ function Collectionform() {
         {showSuccess && (
           <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow-lg">
             ✅ Your review was sent successfully!
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm text-center mb-4">
+            ⚠️ {errorMessage}
           </div>
         )}
 

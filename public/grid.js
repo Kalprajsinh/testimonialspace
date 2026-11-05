@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   container.innerHTML = `
     <section class="${bgColor} ${textColor} py-20 px-6">
       <div class="max-w-7xl mx-auto text-center relative">
-      <div class="absolute -bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
+      <div class="watermark absolute -bottom-5 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
         <h2 class="text-4xl font-extrabold tracking-tight mb-4">Customer Success Stories</h2>
         <p class="text-lg ${secondaryText} mb-12">See how businesses like yours are growing with our platform</p>
         <div id="testimonials-wrapper" class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3"></div>
@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+    if (res.headers.get("X-Remove-Watermark") === "true") {
+      const watermarkEl = container.querySelector(".watermark");
+      if (watermarkEl) watermarkEl.remove();
+    }
     const testimonials = await res.json();
     const wrapper = document.getElementById("testimonials-wrapper");
 

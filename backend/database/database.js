@@ -1,8 +1,17 @@
 const mongoose = require('mongoose');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 require('dotenv').config();
 
-mongoose.connect(process.env.mongodb_URL, {useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {console.log("");})
+const mongoUri = process.env.mongodb_URL || process.env.MONGODB_URL;
+if (mongoUri) {
+  mongoose.connect(mongoUri)
+    .then(() => { console.log("Connected to MongoDB"); })
+    .catch((err) => { console.error("MongoDB connection error:", err.message); });
+} else {
+  console.warn("Warning: mongodb_URL environment variable is not defined");
+}
 
 const organizationSchema = new mongoose.Schema({
     admin: { type: String, required: true },

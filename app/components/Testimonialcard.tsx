@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Heart, Star } from 'lucide-react';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { BACKEND_URL } from '@/lib/config';
 
 interface Testimonial {
   admin: string;
@@ -25,7 +26,7 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
 
   async function favoriteTestimonial() {
     if (!fav) {
-      const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite', {
+      const responce = await axios.post(`${BACKEND_URL}/api/favorite`, {
         admin: testimonial.admin,
         email: testimonial.email,
         organizationName: testimonial.organizationName
@@ -35,7 +36,7 @@ function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
       }
     }
     else {
-      const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite/remove', {
+      const responce = await axios.post(`${BACKEND_URL}/api/favorite/remove`, {
         admin: testimonial.admin,
         email: testimonial.email,
         organizationName: testimonial.organizationName

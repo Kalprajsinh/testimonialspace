@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Heart, Star } from 'lucide-react';
 import Image from 'next/image';
+import { BACKEND_URL } from '@/lib/config';
 
 interface Testimonial {
   admin: string;
@@ -27,7 +28,7 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
 
   async function deleteTestimonial() {
     try {
-      const response = await axios.post('https://testimonialspace-63bp.vercel.app/api/delete/testimonial', {
+      const response = await axios.post(`${BACKEND_URL}/api/delete/testimonial`, {
         admin: testimonial.admin,
         email: testimonial.email,
         organizationName: testimonial.organizationName,
@@ -44,8 +45,8 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
   async function favoriteTestimonial() {
     try {
       const endpoint = fav
-        ? 'https://testimonialspace-63bp.vercel.app/api/favorite/remove'
-        : 'https://testimonialspace-63bp.vercel.app/api/favorite';
+        ? `${BACKEND_URL}/api/favorite/remove`
+        : `${BACKEND_URL}/api/favorite`;
 
       const response = await axios.post(endpoint, {
         admin: testimonial.admin,

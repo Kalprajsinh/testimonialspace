@@ -3,6 +3,18 @@ const router = express.Router();
 const { User, Organization, Subscription } = require("../database/database");
 const { Organizationdata, userdatatext, userdatavideo } = require("../zod/zod");
 
+// Helper to look up subscription for an admin (by email, fullname, or userId)
+const getAdminSubscription = async (adminIdentifier) => {
+  if (!adminIdentifier) return null;
+  return await Subscription.findOne({
+    $or: [
+      { email: adminIdentifier },
+      { fullname: adminIdentifier },
+      { userId: adminIdentifier }
+    ]
+  });
+};
+
 router.get("/", (req, res) => {
     res.send(".");
 });
@@ -19,6 +31,25 @@ router.post("/api/organization", async (req, res) => {
         const existingOrganization = await Organization.findOne({ admin,name });
         if (existingOrganization) {
             return res.status(400).send("Organization already exists");
+        }
+
+        // Plan restrictions on Organization creation:
+        // Free: max 1
+        // Standard: max 3
+        // Pro: unlimited
+        const subscription = await getAdminSubscription(admin);
+        const plan = subscription ? subscription.plan : 'Free';
+        const orgCount = await Organization.countDocuments({ admin });
+
+        if (plan === 'Free' && orgCount >= 1) {
+            return res.status(403).json({ 
+                error: "Free plan is limited to 1 organization. Please upgrade your plan to create more." 
+            });
+        }
+        if (plan === 'standard' && orgCount >= 3) {
+            return res.status(403).json({ 
+                error: "Standard plan is limited to 3 organizations. Please upgrade to Pro for unlimited organizations." 
+            });
         }
 
         const orga = new Organization({ admin, name, logo, title, message });
@@ -68,6 +99,18 @@ router.post("/api/addtextuser", async (req, res) => {
             return res.status(400).send("User with this email already exists in the organization");
         }
 
+        // Testimonial limit enforcement (Free: 50 testimonials total)
+        const subscription = await getAdminSubscription(admin);
+        const plan = subscription ? subscription.plan : 'Free';
+        if (plan === 'Free') {
+            const testimonialCount = await User.countDocuments({ admin });
+            if (testimonialCount >= 50) {
+                return res.status(403).json({
+                    error: "This space has reached the 50 testimonial limit for the Free plan. Please ask the admin to upgrade."
+                });
+            }
+        }
+
       const newUser = new User({
         admin,
         name,
@@ -105,6 +148,18 @@ router.post("/api/addtextuser", async (req, res) => {
            return res.status(400).send("User with this email already exists in the organization");
        }
        
+       // Testimonial limit enforcement (Free: 50 testimonials total)
+       const subscription = await getAdminSubscription(admin);
+       const plan = subscription ? subscription.plan : 'Free';
+       if (plan === 'Free') {
+           const testimonialCount = await User.countDocuments({ admin });
+           if (testimonialCount >= 50) {
+               return res.status(403).json({
+                   error: "This space has reached the 50 testimonial limit for the Free plan. Please ask the admin to upgrade."
+               });
+           }
+       }
+
       const newUser = new User({
         admin,
         name,
@@ -159,6 +214,14 @@ router.get("/api/favorite", async (req, res) => {
     try {
         const { admin, organizationName } = req.query;
         const users = await User.find({ admin, organizationName, favorite: true });
+
+        // Watermark check: Free plan has watermark, Standard & Pro have watermark removed
+        const subscription = await getAdminSubscription(admin);
+        const plan = subscription ? subscription.plan : 'Free';
+        const removeWatermark = (plan === 'standard' || plan === 'pro');
+
+        res.set("Access-Control-Expose-Headers", "X-Remove-Watermark");
+        res.set("X-Remove-Watermark", removeWatermark ? "true" : "false");
         res.json(users);
     } catch (err) {
         res.status(500).send(err);
@@ -369,14 +432,18 @@ router.delete("/api/delete-organization", async (req, res) => {
   
 router.post("/api/check-subscription", async (req, res) => {
   try {
-    const { fullname, email } = req.body;
+    const { fullname, email, userId } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
 
-    const subscription = await Subscription.findOne({ email: email});
+    const safeFullname = fullname || (email ? email.split('@')[0] : "User");
+    let subscription = await Subscription.findOne({ email: email });
 
     if (!subscription) {
       subscription = await Subscription.create({
-        userId: email, 
-        fullname,
+        userId: userId || email, 
+        fullname: safeFullname,
         email,
         plan: 'Free',
         amount: 0,
@@ -387,18 +454,36 @@ router.post("/api/check-subscription", async (req, res) => {
         endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year for free plan
         paymentHistory: []
       });
+    } else {
+      // Check if paid subscription has expired
+      if (subscription.plan !== 'Free' && subscription.endDate && new Date(subscription.endDate) < new Date()) {
+        subscription.plan = 'Free';
+        subscription.status = 'inactive';
+        subscription.lastUpdated = new Date();
+        await subscription.save();
+      }
     }
     res.status(200).json(subscription);
   } catch (err) {
     console.error("Error checking/creating subscription:", err);
-    res.status(500).send(err);
+    res.status(500).json({ error: err.message || "Error checking subscription" });
   }
 });
 
 router.post("/api/check-session", async (req, res) => {
   try {
     const { sessionId } = req.body;
-    const subscription = await Subscription.findOne({ sessionId });
+    if (!sessionId) {
+      return res.status(400).json({ error: "Session ID required" });
+    }
+
+    // Check both current session and any past sessions in payment history
+    const subscription = await Subscription.findOne({
+      $or: [
+        { sessionId },
+        { "paymentHistory.sessionId": sessionId }
+      ]
+    });
 
     res.status(200).json({
       used: !!subscription
@@ -417,51 +502,59 @@ router.post("/api/update-subscription", async (req, res) => {
       email, 
       plan, 
       amount, 
-      currency, 
+      currency = "usd", 
       sessionId, 
-      status, 
+      status = "active", 
       startDate, 
       endDate 
     } = req.body;
 
-    if (!email || !plan || !amount || !sessionId || !fullname) {
+    const safeFullname = fullname || (email ? email.split('@')[0] : "User");
+
+    if (!email || !plan || amount === undefined || !sessionId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     let subscription = await Subscription.findOne({ email });
 
+    const newStartDate = startDate ? new Date(startDate) : new Date();
+    const newEndDate = endDate ? new Date(endDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
     if (subscription) {
-      subscription.fullname = fullname;
+      subscription.fullname = safeFullname;
       subscription.plan = plan;
-      subscription.amount = amount;
+      subscription.amount = Number(amount);
       subscription.currency = currency;
       subscription.sessionId = sessionId;
       subscription.status = status;
-      subscription.startDate = startDate;
-      subscription.endDate = endDate;
+      subscription.startDate = newStartDate;
+      subscription.endDate = newEndDate;
       subscription.lastUpdated = new Date();
 
+      if (!subscription.paymentHistory) {
+        subscription.paymentHistory = [];
+      }
       subscription.paymentHistory.push({
-        amount,
+        amount: Number(amount),
         currency,
         date: new Date(),
         sessionId
       });
     } else {
       subscription = new Subscription({
-        userId,
-        fullname,
+        userId: userId || email,
+        fullname: safeFullname,
         email,
         plan,
-        amount,
+        amount: Number(amount),
         currency,
         sessionId,
         status,
-        startDate,
-        endDate,
+        startDate: newStartDate,
+        endDate: newEndDate,
         lastUpdated: new Date(),
         paymentHistory: [{
-          amount,
+          amount: Number(amount),
           currency,
           date: new Date(),
           sessionId
@@ -478,7 +571,7 @@ router.post("/api/update-subscription", async (req, res) => {
 
   } catch (err) {
     console.error("Error updating subscription:", err);
-    res.status(500).json({ error: "Failed to update subscription" });
+    res.status(500).json({ error: "Failed to update subscription", details: err.message });
   }
 });
 

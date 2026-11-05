@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation'
 import axios from 'axios';
 import { useUser } from '@clerk/nextjs';
 import Testimonialhorizontal from './Testimonialhorizontal';
+import { BACKEND_URL } from '@/lib/config';
 
 interface Testimonial {
   admin: string;
@@ -25,7 +26,7 @@ function Favoritetestimonial() {
 
   useEffect(() => {
     async function alltestimonial() {
-      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/favorite", {
+      const respons = await axios.get(`${BACKEND_URL}/api/favorite`, {
         params: { admin: user?.fullName, organizationName: decodeURIComponent(params.organame), }
       });
       setalltestimonial(respons.data);
@@ -101,7 +102,7 @@ function Favoritetestimonialtwo() {
 
   useEffect(() => {
     async function alltestimonial() {
-      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/favorite", {
+      const respons = await axios.get(`${BACKEND_URL}/api/favorite`, {
         params: { admin: user?.fullName, organizationName: params.organame }
       });
       setalltestimonial(respons.data);

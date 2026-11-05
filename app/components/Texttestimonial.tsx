@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { useUser } from '@clerk/nextjs';
 import Testimonialhorizontal from './Testimonialhorizontal';
+import { BACKEND_URL } from '@/lib/config';
 
 interface Testimonial {
   admin: string;
@@ -25,7 +26,7 @@ function Texttestimonial() {
   useEffect(() => {
     async function fetchAllTestimonials() {
       try {
-        const response = await axios.get("https://testimonialspace-63bp.vercel.app/api/textuser", {
+        const response = await axios.get(`${BACKEND_URL}/api/textuser`, {
           params: {
             admin: user?.fullName,
             organizationName: params.organame,

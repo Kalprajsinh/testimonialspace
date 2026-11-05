@@ -3,71 +3,106 @@
 import { useUser } from "@clerk/nextjs";
 import { SignUpButton } from "@clerk/nextjs";
 import { loadStripe } from '@stripe/stripe-js';
-import { Video, Shield, Zap, Star, Layout, Check } from "lucide-react";
+import { Video, Shield, Zap, Star, Layout, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
-// import Image from 'next/image';
+import { BACKEND_URL } from "@/lib/config";
 
 export const runtime = "edge";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-
 export default function HomePage() {
   const { user, isSignedIn } = useUser();
+  const [currentPlan, setCurrentPlan] = useState<string>("Free");
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const handleClick1 = async () => {
     try {
+      setCheckoutLoading("standard");
       const res = await fetch('/api/standard', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user?.primaryEmailAddress?.emailAddress,
+          userId: user?.id,
+        })
       });
-      const { id } = await res.json();
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
       const stripe = await stripePromise;
       if (!stripe) {
         return;
       }
 
-      await stripe.redirectToCheckout({ sessionId: id });
+      await stripe.redirectToCheckout({ sessionId: data.id });
     } catch (error) {
       console.error('Error initiating standard plan payment:', error);
+    } finally {
+      setCheckoutLoading(null);
     }
   };
 
   const handleClick2 = async () => {
     try {
+      setCheckoutLoading("pro");
       const res = await fetch('/api/pro', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user?.primaryEmailAddress?.emailAddress,
+          userId: user?.id,
+        })
       });
-      const { id } = await res.json();
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
       const stripe = await stripePromise;
       if (!stripe) {
         return;
       }
 
-      await stripe.redirectToCheckout({ sessionId: id });
+      await stripe.redirectToCheckout({ sessionId: data.id });
     } catch (error) {
       console.error('Error initiating pro plan payment:', error);
+    } finally {
+      setCheckoutLoading(null);
     }
   };
 
   useEffect(() => {
+    let isMounted = true;
     const checkSubscription = async () => {
-      if (user) {
+      if (user?.primaryEmailAddress?.emailAddress) {
         try {
-          await axios.post('https://testimonialspace-63bp.vercel.app/api/check-subscription', {
-            fullname: user.fullName,
-            email: user.primaryEmailAddress?.emailAddress,
+          const safeFullname = user.fullName || user.username || user.primaryEmailAddress.emailAddress.split('@')[0] || "User";
+          const res = await axios.post(`${BACKEND_URL}/api/check-subscription`, {
+            userId: user.id,
+            fullname: safeFullname,
+            email: user.primaryEmailAddress.emailAddress,
           });
-
+          if (isMounted && res.data?.plan) {
+            setCurrentPlan(res.data.plan);
+          }
         } catch (error) {
           console.error('Error checking subscription:', error);
         }
       }
     };
 
-    checkSubscription();
-  }, [user]);
+    if (isSignedIn) {
+      checkSubscription();
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [user, isSignedIn]);
 
   return (
     <div className="flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black text-white">
@@ -208,12 +243,27 @@ export default function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold pb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-400">
               Select your plan
             </h2>
+            <p className="text-zinc-400 text-lg">
+              Choose the perfect plan for your customer testimonial needs
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
-            <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
-              <h3 className="text-2xl font-bold mb-2">Free</h3>
+            {/* Free Plan */}
+            <div className={`rounded-2xl p-8 border bg-zinc-900/50 transition-all ${
+              isSignedIn && currentPlan.toLowerCase() === 'free' 
+                ? 'border-blue-500 shadow-lg shadow-blue-500/10' 
+                : 'border-zinc-800'
+            }`}>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-bold">Free</h3>
+                {isSignedIn && currentPlan.toLowerCase() === 'free' && (
+                  <span className="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/40 px-2.5 py-1 rounded-full font-semibold">
+                    Current Plan
+                  </span>
+                )}
+              </div>
               <p className="text-zinc-400 mb-6">Perfect for getting started</p>
               <div className="mb-6">
                 <span className="text-4xl font-bold">$0</span>
@@ -234,22 +284,38 @@ export default function HomePage() {
                 ))}
               </ul>
               {isSignedIn ? (
-                <Link href="/dashboard">
+                <Link href="/dashboard" className="block w-full">
                   <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
-                    Get Started
+                    {currentPlan.toLowerCase() === 'free' ? "Go to Dashboard" : "Included"}
                   </button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
                   <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
-                    Sign Up to Get Started
+                    Get Started
                   </button>
                 </SignUpButton>
               )}
             </div>
 
-            <div className="rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl">
-              <h3 className="text-2xl font-bold mb-2">Standard</h3>
+            {/* Standard Plan */}
+            <div className={`rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent text-white shadow-xl transition-all ${
+              isSignedIn && currentPlan.toLowerCase() === 'standard' 
+                ? 'border-blue-400 shadow-blue-500/20 ring-2 ring-blue-500/30' 
+                : 'border-zinc-800'
+            }`}>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-bold">Standard</h3>
+                {isSignedIn && currentPlan.toLowerCase() === 'standard' ? (
+                  <span className="text-xs bg-blue-500/30 text-blue-300 border border-blue-400 px-2.5 py-1 rounded-full font-semibold">
+                    Current Plan
+                  </span>
+                ) : (
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2.5 py-1 rounded-full font-semibold">
+                    Popular
+                  </span>
+                )}
+              </div>
               <p className="text-blue-400 mb-6">Most popular for growing businesses</p>
               <div className="mb-6">
                 <span className="text-4xl font-bold">$6</span>
@@ -271,12 +337,33 @@ export default function HomePage() {
                 ))}
               </ul>
               {isSignedIn ? (
-                <button
-                  onClick={handleClick1}
-                  className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Get Started
-                </button>
+                currentPlan.toLowerCase() === 'standard' ? (
+                  <Link href="/dashboard" className="block w-full">
+                    <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600/50 hover:bg-blue-600 text-white">
+                      Active Plan (Dashboard)
+                    </button>
+                  </Link>
+                ) : currentPlan.toLowerCase() === 'pro' ? (
+                  <Link href="/dashboard" className="block w-full">
+                    <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-zinc-800 text-zinc-400">
+                      Included in Pro
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={handleClick1}
+                    disabled={checkoutLoading === 'standard'}
+                    className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                  >
+                    {checkoutLoading === 'standard' ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" /> Redirecting to Checkout...
+                      </>
+                    ) : (
+                      "Upgrade to Standard ($6/mo)"
+                    )}
+                  </button>
+                )
               ) : (
                 <SignUpButton mode="modal">
                   <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white">
@@ -286,8 +373,20 @@ export default function HomePage() {
               )}
             </div>
 
-            <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
-              <h3 className="text-2xl font-bold mb-2">Pro</h3>
+            {/* Pro Plan */}
+            <div className={`rounded-2xl p-8 border bg-zinc-900/50 transition-all ${
+              isSignedIn && currentPlan.toLowerCase() === 'pro' 
+                ? 'border-purple-500 shadow-lg shadow-purple-500/20 ring-2 ring-purple-500/30' 
+                : 'border-zinc-800'
+            }`}>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-bold">Pro</h3>
+                {isSignedIn && currentPlan.toLowerCase() === 'pro' && (
+                  <span className="text-xs bg-purple-500/30 text-purple-300 border border-purple-400 px-2.5 py-1 rounded-full font-semibold">
+                    Current Plan
+                  </span>
+                )}
+              </div>
               <p className="text-zinc-400 mb-6">For large organizations</p>
               <div className="mb-6">
                 <span className="text-4xl font-bold">$12</span>
@@ -309,12 +408,27 @@ export default function HomePage() {
                 ))}
               </ul>
               {isSignedIn ? (
-                <button
-                  onClick={handleClick2}
-                  className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
-                >
-                  Get Started
-                </button>
+                currentPlan.toLowerCase() === 'pro' ? (
+                  <Link href="/dashboard" className="block w-full">
+                    <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-purple-600/50 hover:bg-purple-600 text-white">
+                      Active Plan (Dashboard)
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={handleClick2}
+                    disabled={checkoutLoading === 'pro'}
+                    className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                  >
+                    {checkoutLoading === 'pro' ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" /> Redirecting to Checkout...
+                      </>
+                    ) : (
+                      "Upgrade to Pro ($12/mo)"
+                    )}
+                  </button>
+                )
               ) : (
                 <SignUpButton mode="modal">
                   <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
