@@ -1,17 +1,83 @@
-const express = require("express")
+const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");  
 const cors = require("cors");
 
 const app = express();
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(cors({
-    origin: "*"
-}));
+
+const allowedOrigins = [
+  "https://testimonialspace.vercel.app",
+  "https://www.testimonialspace.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+];
+
+// CORS configuration supporting production, localhost, and embeds
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
+      return callback(null, true);
+    }
+    // Allow any third-party websites to load public embed testimonials
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+    "X-CSRF-Token",
+  ],
+  exposedHeaders: ["X-Remove-Watermark"],
+};
+
+// Direct CORS header injector and preflight handler
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (origin && (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token"
+  );
+  res.setHeader("Access-Control-Expose-Headers", "X-Remove-Watermark");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/", require(path.resolve(__dirname, "../routes/router.js")));
 
-app.listen(3001, () => {
-    console.log("Server is running on port 3001");
-});
+// Export app for Vercel Serverless Functions
+module.exports = app;
+
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
