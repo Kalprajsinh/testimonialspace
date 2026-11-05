@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { SignUpButton } from "@clerk/nextjs";
 import { loadStripe } from '@stripe/stripe-js';
-import { Video,Shield,Zap, Star, Layout, Check } from "lucide-react";
+import { Video, Shield, Zap, Star, Layout, Check } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import axios from 'axios';
@@ -59,7 +59,7 @@ export default function HomePage() {
             fullname: user.fullName,
             email: user.primaryEmailAddress?.emailAddress,
           });
-          
+
         } catch (error) {
           console.error('Error checking subscription:', error);
         }
@@ -75,7 +75,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-black/50" />
         <div className="relative z-10 flex flex-col items-center justify-center text-center p-8 max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold pb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-400">
-          Collect & Showcase Testimonials Effortlessly
+            Collect & Showcase Testimonials Effortlessly
           </h1>
           <p className="text-lg text-gray-300 mb-8">
             Testimonial Space helps businesses collect, manage, and display customer feedback through an easy-to-use platform.
@@ -114,7 +114,7 @@ export default function HomePage() {
               Everything you need to collect and showcase authentic customer testimonials
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
@@ -149,7 +149,7 @@ export default function HomePage() {
               }
             ].map((feature, index) => (
               <div key={index} className="group p-8 bg-zinc-900/50 rounded-2xl border border-zinc-800 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
-     
+
                 <h3 className="text-xl font-bold mb-3 group-hover:text-blue-400 transition-colors duration-300">{feature.title}</h3>
                 <p className="text-zinc-400">{feature.description}</p>
               </div>
@@ -206,124 +206,124 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold pb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-400">
-            Select your plan
+              Select your plan
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
-          <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
-            <h3 className="text-2xl font-bold mb-2">Free</h3>
-            <p className="text-zinc-400 mb-6">Perfect for getting started</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$0</span>
+            <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
+              <h3 className="text-2xl font-bold mb-2">Free</h3>
+              <p className="text-zinc-400 mb-6">Perfect for getting started</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">$0</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {[
+                  "1 organization",
+                  "50 testimonial",
+                  "Basic analytics",
+                  "Simple embed",
+                  "layout access",
+                  "with watermark"
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-white" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              {isSignedIn ? (
+                <Link href="/dashboard">
+                  <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                    Get Started
+                  </button>
+                </Link>
+              ) : (
+                <SignUpButton mode="modal">
+                  <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                    Sign Up to Get Started
+                  </button>
+                </SignUpButton>
+              )}
             </div>
-            <ul className="space-y-4 mb-8">
-              {[
-                "1 organization",
-                "50 testimonial",
-                "Basic analytics",
-                "Simple embed",
-                "layout access",
-                "with watermark"
-              ].map((feature, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-white" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            {isSignedIn ? (
-              <Link href="/dashboard">
-                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+
+            <div className="rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl">
+              <h3 className="text-2xl font-bold mb-2">Standard</h3>
+              <p className="text-blue-400 mb-6">Most popular for growing businesses</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">$6</span>
+                <span className="text-blue-400">/mo</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {[
+                  "3 organization",
+                  "Unlimited testimonials",
+                  "Custom branding",
+                  "remove watermarks",
+                  "Priority support",
+                  "Custom integrations"
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-blue-400" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              {isSignedIn ? (
+                <button
+                  onClick={handleClick1}
+                  className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
+                >
                   Get Started
                 </button>
-              </Link>
-            ) : (
-              <SignUpButton mode="modal">
-                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
-                  Sign Up to Get Started
-                </button>
-              </SignUpButton>
-            )}
-          </div>
-
-          <div className="rounded-2xl p-8 border bg-gradient-to-b from-blue-500/10 to-transparent border-zinc-800 text-white shadow-xl">
-            <h3 className="text-2xl font-bold mb-2">Standard</h3>
-            <p className="text-blue-400 mb-6">Most popular for growing businesses</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$6</span>
-              <span className="text-blue-400">/mo</span>
+              ) : (
+                <SignUpButton mode="modal">
+                  <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white">
+                    Subscribe
+                  </button>
+                </SignUpButton>
+              )}
             </div>
-            <ul className="space-y-4 mb-8">
-              {[
-                "3 organization",
-                "Unlimited testimonials",
-                "Custom branding",
-                "remove watermarks",
-                "Priority support",
-                "Custom integrations"
-              ].map((feature, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-blue-400" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            {isSignedIn ? (
-              <button
-                onClick={handleClick1}
-                className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Get Started
-              </button>
-            ) : (
-              <SignUpButton mode="modal">
-                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-blue-600 hover:bg-blue-700 text-white">
-                  Subscribe
-                </button>
-              </SignUpButton>
-            )}
-          </div>
 
-          <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
-            <h3 className="text-2xl font-bold mb-2">Pro</h3>
-            <p className="text-zinc-400 mb-6">For large organizations</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$12</span>
-              <span className="text-zinc-400">/mo</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              {[
-                "Unlimited organization",
-                "Unlimited testimonials",
-                "All Pro features",
-                "Dedicated support",
-                "API access",
-                "Custom integrations"
-              ].map((feature, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-white" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            {isSignedIn ? (
-              <button
-                onClick={handleClick2}
-                className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
-              >
-                Get Started
-              </button>
-            ) : (
-              <SignUpButton mode="modal">
-                <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
-                  Subscribe
+            <div className="rounded-2xl p-8 border bg-zinc-900/50 border-zinc-800">
+              <h3 className="text-2xl font-bold mb-2">Pro</h3>
+              <p className="text-zinc-400 mb-6">For large organizations</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">$12</span>
+                <span className="text-zinc-400">/mo</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {[
+                  "Unlimited organization",
+                  "Unlimited testimonials",
+                  "All Pro features",
+                  "Dedicated support",
+                  "API access",
+                  "Custom integrations"
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <Check className="w-5 h-5 text-white" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              {isSignedIn ? (
+                <button
+                  onClick={handleClick2}
+                  className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white"
+                >
+                  Get Started
                 </button>
-              </SignUpButton>
-            )}
+              ) : (
+                <SignUpButton mode="modal">
+                  <button className="w-full py-4 px-6 rounded-xl font-bold transition-all cursor-pointer duration-300 bg-white/10 hover:bg-white/20 text-white">
+                    Subscribe
+                  </button>
+                </SignUpButton>
+              )}
+            </div>
           </div>
-        </div>
 
         </div>
       </section>
@@ -332,7 +332,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold pb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-400">
-            Example of testimonials
+              Example of testimonials
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
               See how businesses like yours are growing with our platform

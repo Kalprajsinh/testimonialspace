@@ -18,35 +18,35 @@ interface Testimonial {
 }
 
 function Videotestimonial() {
-    const [alltestimonial, setalltestimonial] = useState<Testimonial[]>([]);
-    const params = useParams<{ organame: string }>()
-  
-    const { user } = useUser();
-  
-    useEffect(() => {
-      async function alltestimonial(){
-        const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/videouser",{
-          params: { admin: user?.fullName,organizationName:params.organame }
-        });
-        setalltestimonial(respons.data);
-      }
-  
-      alltestimonial();
-  
-  },[user?.fullName , params.organame]);
-  
-    return (
+  const [alltestimonial, setalltestimonial] = useState<Testimonial[]>([]);
+  const params = useParams<{ organame: string }>()
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    async function alltestimonial() {
+      const respons = await axios.get("https://testimonialspace-63bp.vercel.app/api/videouser", {
+        params: { admin: user?.fullName, organizationName: params.organame }
+      });
+      setalltestimonial(respons.data);
+    }
+
+    alltestimonial();
+
+  }, [user?.fullName, params.organame]);
+
+  return (
     <div className="p-8 pt-20 min-h-screen">
       <div className="mt-6 text-white">
         <h2 className="text-2xl font-bold border-b pb-2 border-gray-700">Video Testimonials</h2>
-    <div className="mt-6 space-y-6">
-            {alltestimonial.map((testimonial: Testimonial, index) => (
-              <Testimonialhorizontal index={index} key={index} testimonial={testimonial} />
-            ))}
-          </div>
+        <div className="mt-6 space-y-6">
+          {alltestimonial.map((testimonial: Testimonial, index) => (
+            <Testimonialhorizontal index={index} key={index} testimonial={testimonial} />
+          ))}
+        </div>
       </div>
     </div>
-    );
+  );
 }
 
 export default Videotestimonial

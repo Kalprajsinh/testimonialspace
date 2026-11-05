@@ -44,7 +44,7 @@ function SuccessContent() {
         }
 
         const { isValid } = await verifyResponse.json();
-        
+
         if (!isValid) {
           setStatus("error");
           return;
@@ -120,4 +120,3 @@ export default function SuccessPage() {
     </Suspense>
   );
 }
-  

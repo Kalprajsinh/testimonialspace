@@ -109,7 +109,7 @@ function Testimonialhorizontal({ index, testimonial, onDelete }: TestimonialCard
             </button>
           </div>
           <p className="text-gray-300 text-xs mt-5">
-            {new Date(testimonial.createdAt).toLocaleDateString([], { month: 'numeric', day: 'numeric' })          } •{" "}
+            {new Date(testimonial.createdAt).toLocaleDateString([], { month: 'numeric', day: 'numeric' })} •{" "}
             {new Date(testimonial.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>

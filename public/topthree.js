@@ -1,25 +1,25 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    const container = document.getElementById("testimonial");
-    const admin = container.getAttribute("admin");
-    const orgName = container.getAttribute("organization");
-    const theme = container.getAttribute("theme");
+  const container = document.getElementById("testimonial");
+  const admin = container.getAttribute("admin");
+  const orgName = container.getAttribute("organization");
+  const theme = container.getAttribute("theme");
 
-    // Determine theme colors
-    const isDark = theme === "dark";
-    const bgColor = isDark ? "bg-black" : "bg-transparent";
-    const textColor = isDark ? "text-white" : "text-gray-900";
-    const secondaryText = isDark ? "text-gray-400" : "text-gray-600";
-    const cardBg = isDark ? "bg-zinc-900" : "bg-white";
-    const quoteColor = isDark ? "text-gray-200" : "text-gray-800";
-  
-    // Fetch testimonials
-    try {
-        const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
-        const testimonials = await res.json();
-        const [first, second, third] = testimonials;
+  // Determine theme colors
+  const isDark = theme === "dark";
+  const bgColor = isDark ? "bg-black" : "bg-transparent";
+  const textColor = isDark ? "text-white" : "text-gray-900";
+  const secondaryText = isDark ? "text-gray-400" : "text-gray-600";
+  const cardBg = isDark ? "bg-zinc-900" : "bg-white";
+  const quoteColor = isDark ? "text-gray-200" : "text-gray-800";
 
-    
-        container.innerHTML = `
+  // Fetch testimonials
+  try {
+    const res = await fetch(`https://testimonialspace-63bp.vercel.app/api/favorite?admin=${encodeURIComponent(admin)}&organizationName=${encodeURIComponent(orgName)}`);
+    const testimonials = await res.json();
+    const [first, second, third] = testimonials;
+
+
+    container.innerHTML = `
           <div class="${bgColor} ${textColor} py-20 px-6">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-center relative">
               <div class="absolute -bottom-10 right-0 text-sm text-gray-400 opacity-50">Powered by <a href="https://testimonialspace.vercel.app">TestimonialSpace</a></div>
@@ -70,8 +70,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             </div>
           </div>
         `;
-      } catch (err) {
-        console.error("Error loading testimonials:", err);
-        container.innerHTML = `<div class="text-center text-red-500">Failed to load testimonials.</div>`;
-      }
-    });
+  } catch (err) {
+    console.error("Error loading testimonials:", err);
+    container.innerHTML = `<div class="text-center text-red-500">Failed to load testimonials.</div>`;
+  }
+});

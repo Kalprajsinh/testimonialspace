@@ -60,8 +60,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 
-  // <div id="testimonial" organization="codepoint"></div>
-  // <script src="https://mywebsite/script.js"></script>
-  // <script src="https://cdn.tailwindcss.com"></script>
+// <div id="testimonial" organization="codepoint"></div>
+// <script src="https://mywebsite/script.js"></script>
+// <script src="https://cdn.tailwindcss.com"></script>
 
 // https://dribbble.com/shots/5256055-Testimonials

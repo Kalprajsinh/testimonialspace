@@ -65,7 +65,7 @@ npm run dev
 yarn dev
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000).
+The app will be available at [https://testimonialspace.vercel.app](https://testimonialspace.vercel.app).
 
 ### 2. Backend Setup
 ```bash
@@ -82,7 +82,7 @@ npm run start
 yarn start
 ```
 
-The backend API will run on [http://localhost:3001](http://localhost:3001).
+The backend API will run on [https://testimonialspace-63bp.vercel.app](https://testimonialspace-63bp.vercel.app).
 
 ---
 

@@ -48,7 +48,7 @@ function NewOrganization() {
       });
       setSuccess("Organization created successfully!");
       setTimeout(() => {
-        router.push("/dashboard"); 
+        router.push("/dashboard");
       }, 1500);
     } catch (err) {
       console.error("Error creating organization:", err);

@@ -84,84 +84,83 @@ function Collectionform() {
   return (
     <div className="min-h-screen bg-white pt-24 px-4">
       <div className=" max-w-2xl mx-auto bg-white border border-gray-200 p-6 rounded-xl shadow-md">
-      <div className="max-w-xl mx-auto text-center">
-        <Image src={logoSrc} alt="Organization Logo" width={5}
-                  height={5} className="mx-auto w-24 h-24 object-cover rounded-full" />
-        <h1 className="text-3xl font-bold mt-4 text-gray-900">{Organization.title}</h1>
-        <p className="text-gray-600 mt-2">{Organization.message}</p>
-      </div>
-
-      {showSuccess && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow-lg">
-          ✅ Your review was sent successfully!
+        <div className="max-w-xl mx-auto text-center">
+          <Image src={logoSrc} alt="Organization Logo" width={5}
+            height={5} className="mx-auto w-24 h-24 object-cover rounded-full" />
+          <h1 className="text-3xl font-bold mt-4 text-gray-900">{Organization.title}</h1>
+          <p className="text-gray-600 mt-2">{Organization.message}</p>
         </div>
-      )}
-      
+
+        {showSuccess && (
+          <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow-lg">
+            ✅ Your review was sent successfully!
+          </div>
+        )}
+
         <h2 className=" mt-10 text-xl font-semibold text-gray-800 text-center mb-6">Leave a Review</h2>
 
         <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            required
-          />
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Your Photo</label>
+          <div className="space-y-4">
             <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setPhoto(e.target.files?.[0] || null)}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:rounded-lg file:border-gray-300 file:text-sm file:bg-gray-50 hover:file:bg-gray-100"
+              type="text"
+              placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg"
               required
             />
-          </div>
+            <input
+              type="email"
+              placeholder="Your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              required
+            />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Overall Rating</label>
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <Star
-                  key={num}
-                  className={`w-6 h-6 cursor-pointer ${
-                    starRating >= num ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                  }`}
-                  onClick={() => setStarRating(num)}
-                />
-              ))}
-              <span className="ml-2 text-sm text-gray-500">{starRating} / 5</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Upload Your Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:rounded-lg file:border-gray-300 file:text-sm file:bg-gray-50 hover:file:bg-gray-100"
+                required
+              />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Overall Rating</label>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <Star
+                    key={num}
+                    className={`w-6 h-6 cursor-pointer ${starRating >= num ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      }`}
+                    onClick={() => setStarRating(num)}
+                  />
+                ))}
+                <span className="ml-2 text-sm text-gray-500">{starRating} / 5</span>
+              </div>
+            </div>
+
+            <textarea
+              placeholder="Your review message"
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              required
+            />
+
+            <button
+              className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
+              type="submit"
+            >
+              Submit Review
+            </button>
           </div>
-
-          <textarea
-            placeholder="Your review message"
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-            rows={4}
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            required
-          />
-
-          <button
-            className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
-            type="submit"
-          >
-            Submit Review
-          </button>
-        </div>
-          </form>
+        </form>
       </div>
     </div>
   );

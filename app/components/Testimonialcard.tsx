@@ -21,30 +21,30 @@ interface TestimonialCardProps {
 
 function Testimonialcard({ index, testimonial }: TestimonialCardProps) {
 
-  const [fav,setfav] = useState<boolean>(testimonial.favorite);
+  const [fav, setfav] = useState<boolean>(testimonial.favorite);
 
   async function favoriteTestimonial() {
-    if(!fav) {
-    const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite', {
-      admin:testimonial.admin, 
-      email:testimonial.email, 
-      organizationName:testimonial.organizationName
-    });
-    if (responce.data) {
-      setfav(true);
+    if (!fav) {
+      const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite', {
+        admin: testimonial.admin,
+        email: testimonial.email,
+        organizationName: testimonial.organizationName
+      });
+      if (responce.data) {
+        setfav(true);
+      }
+    }
+    else {
+      const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite/remove', {
+        admin: testimonial.admin,
+        email: testimonial.email,
+        organizationName: testimonial.organizationName
+      });
+      if (responce.data) {
+        setfav(false);
+      }
     }
   }
-  else{
-    const responce = await axios.post('https://testimonialspace-63bp.vercel.app/api/favorite/remove', {
-      admin:testimonial.admin, 
-      email:testimonial.email, 
-      organizationName:testimonial.organizationName
-    });
-    if (responce.data) {
-      setfav(false);
-    }
-  }
-}
 
   return (
     <div key={index} className="bg-zinc-900 p-6 rounded-lg shadow-lg flex flex-col">
