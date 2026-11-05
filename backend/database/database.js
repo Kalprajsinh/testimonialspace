@@ -4,13 +4,53 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 require('dotenv').config();
 
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  const mongoUri = process.env.mongodb_URL || process.env.MONGODB_URL;
+  if (!mongoUri) {
+    throw new Error("Missing mongodb_URL environment variable in server configuration");
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    };
+
+    cached.promise = mongoose.connect(mongoUri, opts).then((m) => {
+      console.log("Successfully connected to MongoDB");
+      return m;
+    }).catch((err) => {
+      cached.promise = null;
+      throw err;
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (err) {
+    cached.promise = null;
+    throw err;
+  }
+
+  return cached.conn;
+}
+
+// Auto-connect if run directly or in standard server environment
 const mongoUri = process.env.mongodb_URL || process.env.MONGODB_URL;
-if (mongoUri) {
-  mongoose.connect(mongoUri)
-    .then(() => { console.log("Connected to MongoDB"); })
-    .catch((err) => { console.error("MongoDB connection error:", err.message); });
-} else {
-  console.warn("Warning: mongodb_URL environment variable is not defined");
+if (mongoUri && (!process.env.VERCEL || process.env.NODE_ENV !== "production")) {
+  connectDB().catch((err) => {
+    console.error("Initial MongoDB connection attempt error:", err.message);
+  });
 }
 
 const organizationSchema = new mongoose.Schema({
@@ -23,7 +63,7 @@ const organizationSchema = new mongoose.Schema({
     timestamps: true 
     });
       
-const Organization = mongoose.model("Organization", organizationSchema);
+const Organization = mongoose.models.Organization || mongoose.model("Organization", organizationSchema);
 
 const subscriptionSchema = new mongoose.Schema({
   userId: {
@@ -82,7 +122,7 @@ const subscriptionSchema = new mongoose.Schema({
   }]
 });
 
-const Subscription = mongoose.model("Subscription", subscriptionSchema);
+const Subscription = mongoose.models.Subscription || mongoose.model("Subscription", subscriptionSchema);
 
 const userSchema = new mongoose.Schema({
     admin: { type: String, required: true },
@@ -97,10 +137,11 @@ const userSchema = new mongoose.Schema({
     timestamps: true 
   });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 module.exports = {
+    connectDB,
     User,
     Organization,
     Subscription
-}
+};

@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");  
 const cors = require("cors");
+const { connectDB } = require(path.resolve(__dirname, "../database/database"));
 
 const app = express();
 
@@ -69,6 +70,34 @@ app.options("*", cors(corsOptions));
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
+// Health check endpoint (doesn't require DB connection)
+app.get("/api/health", (req, res) => {
+  const hasUri = !!(process.env.mongodb_URL || process.env.MONGODB_URL);
+  res.json({
+    status: "ok",
+    hasMongoUri: hasUri,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Middleware to ensure DB is connected before handling DB routes
+app.use(async (req, res, next) => {
+  if (req.path === "/" || req.path === "/api/health") {
+    return next();
+  }
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("Database connection error in request handler:", err.message);
+    return res.status(500).json({
+      error: "Database connection failed",
+      details: err.message,
+      hint: "Check mongodb_URL in Vercel settings and allow 0.0.0.0/0 in MongoDB Atlas Network Access"
+    });
+  }
+});
 
 app.use("/", require(path.resolve(__dirname, "../routes/router.js")));
 
